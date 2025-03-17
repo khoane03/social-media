@@ -1,0 +1,64 @@
+server:
+  port: 8686
+  servlet:
+    context-path: /api/v1
+spring:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: ${URL}
+    username: ${USERNAME}
+    password: ${PASSWORD}
+
+  jpa:
+    database: POSTGRESQL
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+    generate-ddl: false
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      time-to-live: 5 #minute
+
+
+logging:
+  level:
+    org.hibernate: ERROR
+    com.zaxxer.hikari: ERROR
+
+define:
+  allowed_origins: http://localhost:5173
+  admin:
+    name: DEV
+    username: admin
+    password: admin
+    email: admin@gmail.com
+    phone: 0986869999
+  security:
+    jwt:
+      secret: ${JWT_SECRET}
+      access-token:
+        expiration: 300000   #(5 minute )
+      refresh-token:
+        expiration: 86400000   #(1 day)
+  otp:
+    expire-time: 1 #(1 minute)
+  cloudinary:
+    cloud-name: ${CLOUD_NAME}
+    api-key: ${CLOUD_API_KEY}
+    api-secret: ${CLOUD_API_SECRET}
