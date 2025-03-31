@@ -14,6 +14,7 @@ import { Dashboard } from "@mui/icons-material";
 import CommingSoon from "../components/common/CommingSoon";
 import Forgot from "../pages/auth/Forgot";
 import Photo from "../pages/profile/Photo";
+import Friends from "../pages/profile/Friends";
 
 function AppRouter() {
     return (
@@ -38,7 +39,7 @@ function AppRouter() {
                         </UserProvider>
                     }>
                     <Route index element={<MainProfile />} />
-                    <Route path="friend" element={<Friend />} />
+                    <Route path="friend" element={<Friends />} />
                     <Route path="photos" element={<Photo />} />
                 </Route>
 
