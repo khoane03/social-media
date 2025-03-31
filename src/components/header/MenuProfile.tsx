@@ -12,12 +12,15 @@ const Menu = ({ open, info }: { open: boolean; info?: { id?: string | null; avat
     const [error, setError] = useState<string | null>(null);
 
     const handleLogout = async () => {
+
         try {
             const accessToken = getAccessToken();
+            console.log("Access Token:", accessToken);
             if (!accessToken) {
                 navigate("/auth");
                 return;
             }
+            
 
             await logout(accessToken);
             setMessage("Đăng xuất thành công");
@@ -28,6 +31,7 @@ const Menu = ({ open, info }: { open: boolean; info?: { id?: string | null; avat
                 setMessage(null);
             }, 2000);
         } catch (error) {
+            console.error("Logout error:", error);  
             setError("Đăng xuất không thành công");
         }
     };
