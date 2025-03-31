@@ -101,7 +101,7 @@ export default function Profile() {
 
                 <div className="">
                     <div className="relative mt-[61px] h-96 bg-gray-300 md:mx-40 rounded-b-lg">
-                        <img src={info?.coverUrl || "https://tintuc.dienthoaigiakho.vn/wp-content/uploads/2024/01/c39af4399a87bc3d7701101b728cddc9.jpg"}
+                        <img src={info?.coverUrl || 'default.png'}
                             alt=""
                             className="w-full h-full object-cover rounded-b-lg" />
                     </div>
@@ -118,7 +118,7 @@ export default function Profile() {
 
                 <div className="md:mx-40 px-4 flex">
                     <div className=" w-40 h-40 rounded-full left-[2%] -translate-y-[20px]">
-                        <img src={info?.avatarUrl || "https://tintuc.dienthoaigiakho.vn/wp-content/uploads/2024/01/c39af4399a87bc3d7701101b728cddc9.jpg"}
+                        <img src={info?.avatarUrl || 'default.png'}
                             alt=""
                             className=" w-full h-full rounded-full border-4 border-white" />
 
@@ -133,7 +133,7 @@ export default function Profile() {
                     <div className="ml-3 py-3">
                         <div className="flex items-center">
                             <span className="font-bold text-lg ">
-                                {info?.name || "Không có tên"}
+                                {info?.name}
                             </span>
                             {info?.verifier && <CheckCircle className="text-blue-500 ml-1" fontSize="small" />}
                         </div>
@@ -148,34 +148,49 @@ export default function Profile() {
                         </div>}
                     </div>
                 </div>
-                <div className="md:mx-40 px-4 flex items-start">
-                    <div className="px-3 py-2 hover:bg-gray-200 rounded-lg">
-                        <NavLink to={`/profile/${userId}`} end className={({ isActive }) =>
-                            `font-bold text-gray-500 ${isActive ? "px-3 py-2 bg-gray-200 rounded-lg" : ""
-                            }`
-                        }>
+                <div className="mx-40 px-4 pb-1 flex items-center justify-start space-x-2 md:space-x-4">
+                    <div className="group">
+                        <NavLink
+                            to={`/profile/${userId}`}
+                            end
+                            className={({ isActive }) =>
+                                `block px-4 py-2 font-semibold text-gray-700 rounded-lg transition-colors duration-200 ${isActive
+                                    ? "bg-blue-100 text-blue-700"
+                                    : "hover:bg-gray-100 group-hover:text-gray-900"
+                                }`
+                            }
+                        >
                             Bài viết
                         </NavLink>
                     </div>
-                    <div className="px-3 py-2 hover:bg-gray-200 rounded-lg">
-                        <NavLink to="photos" className={({ isActive }) =>
-                            `font-bold text-gray-500 ${isActive ? "px-3 py-2 bg-gray-200 rounded-lg" : ""
-                            }`
-                        }>
+                    <div className="group">
+                        <NavLink
+                            to="photos"
+                            className={({ isActive }) =>
+                                `block px-4 py-2 font-semibold text-gray-700 rounded-lg transition-colors duration-200 ${isActive
+                                    ? "bg-blue-100 text-blue-700"
+                                    : "hover:bg-gray-100 group-hover:text-gray-900"
+                                }`
+                            }
+                        >
                             Ảnh
                         </NavLink>
                     </div>
-                    <div className="px-3 py-2 hover:bg-gray-200 rounded-lg">
-                        <NavLink to="friend" className={({ isActive }) =>
-                            `font-bold text-gray-500 ${isActive ? "px-3 py-2 bg-gray-200 rounded-lg" : ""
-                            }`
-                        }>
-                            Bạn Bè
+                    <div className="group">
+                        <NavLink
+                            to="friend"
+                            className={({ isActive }) =>
+                                `block px-4 py-2 font-semibold text-gray-700 rounded-lg transition-colors duration-200 ${isActive
+                                    ? "bg-blue-100 text-blue-700"
+                                    : "hover:bg-gray-100 group-hover:text-gray-900"
+                                }`
+                            }
+                        >
+                            Bạn bè
                         </NavLink>
                     </div>
-
                 </div>
-                <div className="bg-[#F2F4F7] text-black h-auto pt-5">
+                <div className="bg-[#F2F4F7] text-black h-screen pt-5 ">
                     <Outlet />
                 </div>
             </div>

@@ -27,8 +27,8 @@ const Photo = () => {
     }, [userId]); 
 
     return (
-        <div className="p-6 bg-gray-100 min-h-screen md:mx-40">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-6">Tất cả ảnh</h2>
+        <div className="p-6 bg-white rounded-lg md:mx-40">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-6 border-b border-gray-300 pb-4">Tất cả ảnh</h2>
             {images.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     {images.map((image, index) => (

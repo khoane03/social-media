@@ -7,6 +7,7 @@ import { useEffect, useState, useCallback } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useUserContext } from "../../context/UserContext";
 import ImageViewer from "../../components/view/ImageViewer";
+import Alert from "../../components/alert/Alert";
 
 interface UserInfo {
     address?: string | null;
@@ -37,6 +38,9 @@ export default function MainProfile() {
     const { userId } = useParams<{ userId: string }>();
     const [showImg, setShowImg] = useState(false);
     const [selectImg, setSelectImg] = useState("");
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
 
     const fetchData = useCallback(async () => {
         try {
@@ -55,7 +59,7 @@ export default function MainProfile() {
                 setPosts(postData.data);
             }
         } catch (error) {
-            console.error("Error fetching data:", error);
+            setError("Failed to fetch data");
         }
         if (user && user.id) {
             setOnlyView(userId !== user.id);
@@ -70,11 +74,11 @@ export default function MainProfile() {
     const handleEdit = async () => {
         if (isEdit) {
             try {
-                console.log("Cập nhật thông tin:", editInfo);
                 await UserService.updateInfo(editInfo);
+                setSuccess("Cập nhật thông tin thành công!");
                 fetchData();
             } catch (error: any) {
-                console.error("Update error:", error.response?.data || error);
+                setError(error.response?.data?.message || "Cập nhật thông tin thất bại!");
             }
         }
         setIsEdit(!isEdit);
@@ -82,6 +86,8 @@ export default function MainProfile() {
 
     return (
         <>
+            {error && <Alert message={error} onClose={() => setError('')} />}
+            {success && <Alert type={'success'} message={success} onClose={() => setSuccess('')} />}
             {showImg && <ImageViewer image={selectImg} onClose={() => setShowImg(false)} />}
             <div className="md:mx-40 px-4 flex">
                 <div className="md:inline-block hidden flex-[4] h-auto">
