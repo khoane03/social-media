@@ -28,8 +28,6 @@ const UpdateImg: React.FC<ModalProps> = ({ isOpen, onClose }) => {
         setPreview("");
     }
 
-
-
     const handleSubmit = async () => {
         try {
             setLoading(true);

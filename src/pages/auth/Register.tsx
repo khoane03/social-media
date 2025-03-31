@@ -50,7 +50,7 @@ function Register() {
         try {
             await registerService(data);
             removeEmail();
-            setTimeout(() => navigate('/login'), 2000);
+            setTimeout(() => navigate('/auth'), 2000);
         } catch (error: any) {
             setGeneralError(error.response?.data?.errMess || AppConstant.ERR_SERVER);
         } finally {

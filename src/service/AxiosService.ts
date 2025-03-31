@@ -20,7 +20,7 @@ axiosInstance.interceptors.request.use(
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       } else {
-        window.location.href = '/login';
+        window.location.href = '/auth';
         return Promise.reject(new Error('No access token'));
       }
     }
@@ -59,16 +59,14 @@ axiosInstance.interceptors.response.use(
                 setAccessToken(newAccessToken);
 
                 originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-                console.log("calling refresh token");
                 return axiosInstance(originalRequest);
               } else {
                 throw new Error('No refresh token available');
               }
             } catch (refreshError) {
-              console.error("Refresh token failed:", refreshError);
               removeAccessToken();
               removeRefreshToken();
-              window.location.href = '/login';
+              window.location.href = '/auth';
               return Promise.reject(refreshError);
             }
           }
@@ -76,7 +74,7 @@ axiosInstance.interceptors.response.use(
 
         case 403:
           console.error("Forbidden: Access denied");
-          window.location.href = '/login';
+          window.location.href = '/auth';
           break;
 
         case 404:
@@ -89,13 +87,13 @@ axiosInstance.interceptors.response.use(
           if (error.response.data.errMess === 'Access Denied') {
             window.location.href = '/no-permission';
             alert("Bạn không có quyền truy cập vào trang này");
-            window.location.href = '/login';
+            window.location.href = '/auth';
           }
-          window.location.href = '/login';
+          window.location.href = '/auth';
           break;
 
         default:
-          window.location.href = '/login';
+          window.location.href = '/auth';
           console.error(`Unhandled status code: ${error.response.status}`);
           break;
       }

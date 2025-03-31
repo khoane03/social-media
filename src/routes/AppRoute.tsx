@@ -10,9 +10,10 @@ import NotFound from "../pages/error/NotFound";
 import AccessDenied from "../pages/error/AccessDenied";
 import Profile from "../pages/profile/Profile";
 import MainProfile from "../pages/profile/MainProfile";
-import { Dashboard, Photo } from "@mui/icons-material";
+import { Dashboard } from "@mui/icons-material";
 import CommingSoon from "../components/common/CommingSoon";
 import Forgot from "../pages/auth/Forgot";
+import Photo from "../pages/profile/Photo";
 
 function AppRouter() {
     return (
@@ -22,7 +23,7 @@ function AppRouter() {
                     <Route index element={<CommingSoon />} />
                     
                 </Route>
-                //auth
+                
                 <Route path="/auth" element={<AuthLayout />}>
                     <Route index element={<Login />} />
                     <Route path="register" element={<Register />} />

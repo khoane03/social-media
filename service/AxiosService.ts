@@ -20,7 +20,7 @@ axiosInstance.interceptors.request.use(
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       } else {
-        window.location.href = '/login';
+        window.location.href = '/auth';
         return Promise.reject(new Error('No access token'));
       }
     }
