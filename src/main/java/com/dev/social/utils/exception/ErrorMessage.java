@@ -35,7 +35,8 @@ public enum ErrorMessage {
 
     ACC_NOT_FOUND(404_001, "Account isn't exist", HttpStatus.NOT_FOUND),
     POST_NOT_FOUND(404_002, "Post isn't exist", HttpStatus.NOT_FOUND),
-    USER_NOT_FOUND(404_002, "User isn't exist", HttpStatus.NOT_FOUND);
+    USER_NOT_FOUND(404_002, "User isn't exist", HttpStatus.NOT_FOUND),
+    EMAIL_NOT_FOUND(404_003, "Email isn't exist", HttpStatus.NOT_FOUND);
 
 
 
