@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -91,17 +93,14 @@ public class UserServiceImpl implements UserService{
         }
     }
 
-
     @Override
     public User getCurrentUser() {
-
-        if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated())
-        {
-            String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
+            String username = authentication.getName();
             return userRepository.findByUsername(username)
                     .orElseThrow(() -> new AppException(ErrorMessage.USER_NOT_FOUND));
         }
         throw new AppException(ErrorMessage.UNAUTHORIZED);
-
     }
 }

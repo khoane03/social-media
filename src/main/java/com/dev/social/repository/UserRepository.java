@@ -3,6 +3,7 @@ package com.dev.social.repository;
 import com.dev.social.entity.User;
 import com.dev.social.utils.constants.AppConst;
 import io.lettuce.core.dynamic.annotation.Param;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -66,4 +67,6 @@ public interface UserRepository extends JpaRepository<User, String> {
     boolean existsByPhone(String phone);
 
     boolean existsByUsernameAndPassword(String username, String password);
+
+    Optional<User> findByEmail(String email);
 }
