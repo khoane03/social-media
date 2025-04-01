@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import FriendService from "../../../service/FriendService"; // Đường dẫn đúng
-import { Block, CheckCircle, MoreHoriz, PersonRemove } from "@mui/icons-material";
+import { CheckCircle } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import Alert from "../alert/Alert";
+import Accept from "../popup/Accept";
 
 const Friend = () => {
     const [friendReq, setFriendReq] = useState<any[]>([]);
@@ -10,7 +11,8 @@ const Friend = () => {
     const [friendBlock, setFriendBlock] = useState<any[]>([]);
     const [success, setSuccess] = useState('');
     const [error, setError] = useState('');
-
+    const [showPopup, setShowPopup] = useState(false);
+    const [friendId, setFriendId] = useState('');
     const getAllFriendSuggestion = async () => {
         try {
             const response = await FriendService.getFriendSuggestion();
@@ -64,14 +66,28 @@ const Friend = () => {
         }
     };
 
-    const blockFriend = async (friendId: string) => {
+    const unBlockFriend = async (friendId: string) => {
         try {
             const formData = new FormData();
             formData.append("friendId", friendId);
             await FriendService.blockFriend(formData);
+            setFriendBlock(prev => prev.filter(friend => friend.friendId !== friendId));
             setSuccess("Bỏ chặn bạn bè thành công");
+            setShowPopup(false);
         } catch (error) {
             console.error("Error blocking friend:", error);
+        }
+    };
+
+    const cancelFriendRequest = async (friendId: string) => {
+        try {
+            const formData = new FormData();
+            formData.append("friendId", friendId);
+            await FriendService.unFriend(formData);
+            setFriendReq(prev => prev.filter(friend => friend.friendId !== friendId));
+            setSuccess("Hủy lời mời kết bạn thành công");
+        } catch (error) {
+            setError("Hủy lời mời kết bạn thất bại");
         }
     };
 
@@ -86,6 +102,7 @@ const Friend = () => {
         <>
             {success && <Alert message={success} type="success" onClose={() => setSuccess('')} />}
             {error && <Alert message={error} type="error" onClose={() => setError('')} />}
+            {showPopup && <Accept action="huỷ chặn" isAccept={() => { unBlockFriend(friendId) }} isReject={() => setShowPopup(false)} />}
             <div className="p-6 bg-white rounded-lg shadow-md">
                 {/* Lời mời kết bạn */}
                 {friendReq.length > 0 && (
@@ -122,7 +139,7 @@ const Friend = () => {
                                             className="bg-blue-600 text-white px-4 py-1.5 rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-300 focus:ring-opacity-50 transition-all duration-200">
                                             Chấp nhận
                                         </button>
-                                        <button
+                                        <button onClick={() => cancelFriendRequest(friend.friendId)}
                                             className="bg-gray-100 text-gray-700 px-4 py-1.5 rounded-md hover:bg-gray-200 focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50 transition-all duration-200"
                                         >
                                             Từ chối
@@ -176,7 +193,10 @@ const Friend = () => {
                                     <div className="ml-auto">
                                         <button
                                             className="bg-gray-200 text-red-600 px-4 py-1.5 rounded-md hover:bg-red-100 transition-colors duration-200"
-                                            onClick={() => blockFriend(friend.friendId)}
+                                            onClick={() => {
+                                                setFriendId(friend.friendId);
+                                                setShowPopup(true);
+                                            }}
                                         >
                                             Bỏ chặn
                                         </button>
