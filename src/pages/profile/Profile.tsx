@@ -148,7 +148,7 @@ export default function Profile() {
                         </div>}
                     </div>
                 </div>
-                <div className="mx-40 px-4 pb-1 flex items-center justify-start space-x-2 md:space-x-4">
+                <div className="md:mx-40 px-4 pb-1 flex items-center justify-start space-x-2 md:space-x-4">
                     <div className="group">
                         <NavLink
                             to={`/profile/${userId}`}
