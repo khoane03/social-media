@@ -1,9 +1,12 @@
 package com.dev.social.utils.mapping;
 
 import com.dev.social.dto.response.FriendResponseDTO;
+import com.dev.social.dto.response.ReactionDetail;
+import com.dev.social.dto.response.ReactionResponseDto;
 import com.dev.social.dto.result.FriendResult;
 import com.dev.social.dto.result.PostResult;
 import com.dev.social.dto.response.PostResponseDTO;
+import com.dev.social.entity.Reaction;
 import com.dev.social.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -23,10 +26,10 @@ public class MapUtils {
 
     public List<PostResponseDTO> mapPost(List<PostResult> postResults) {
         Map<String, PostResponseDTO> postResponseDTOMap = new LinkedHashMap<>();
-        for(PostResult post: postResults){
+        for (PostResult post : postResults) {
             PostResponseDTO postResponseDTO = postResponseDTOMap.computeIfAbsent(post.getPostId(),
                     postId -> new PostResponseDTO(post));
-            if(post.getImageUrl() != null){
+            if (post.getImageUrl() != null) {
                 postResponseDTO.getImages().add(post.getImageUrl());
             }
         }
@@ -37,10 +40,23 @@ public class MapUtils {
         List<String> friendIds = req.stream()
                 .map(FriendResult::getFriendId)
                 .toList();
-        return userRepository.findAllById((Iterable<String>) friendIds).stream()
+        return userRepository.findAllById(friendIds)
+                .stream()
                 .map(FriendResponseDTO::new)
                 .collect(Collectors.toList());
     }
 
+    public List<ReactionResponseDto> mapReaction(List<Reaction> reactions) {
+        if (reactions == null || reactions.isEmpty()) return List.of();
+
+        Map<String, ReactionResponseDto> reactionMap = new LinkedHashMap<>();
+        reactions.forEach(reaction -> {
+            String postId = reaction.getPost().getId();
+            ReactionResponseDto dto = reactionMap.computeIfAbsent(postId, ReactionResponseDto::new);
+            dto.setTotalReactions(dto.getTotalReactions() + 1);
+            dto.getReactions().add(new ReactionDetail(reaction));
+        });
+        return new ArrayList<>(reactionMap.values());
+    }
 
 }
