@@ -12,11 +12,6 @@ import java.util.Optional;
 public interface ReactionRepository extends JpaRepository<Reaction, String> {
     Optional<Reaction> findByPostIdAndUserId(String postId, String userId);
 
-    @Query(value = "SELECT r.reaction_type, COUNT(r.id) AS total_reactions " +
-            "FROM tbl_reaction AS r " +
-            "GROUP BY r.reaction_type",
-            nativeQuery = true)
-    List<Object[]> countReactionsGroupedByType();
-
-
+    @Query("SELECT r FROM Reaction r JOIN FETCH r.user WHERE r.post.id = :postId")
+    List<Reaction> findByPostId(String postId);
 }
