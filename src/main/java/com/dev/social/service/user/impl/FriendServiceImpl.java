@@ -22,131 +22,92 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Slf4j
 public class FriendServiceImpl implements FriendService {
 
-    FriendRepository friendRepository;
-    UserRepository userRepository;
-    UserService userService;
-    MapUtils mapUtils;
-
+    final FriendRepository friendRepository;
+    final UserRepository userRepository;
+    final UserService userService;
+    final MapUtils mapUtils;
 
     @Override
     public void sendFriendRequest(String receiverId) {
         User sender = userService.getCurrentUser();
         if (sender.getId().equals(receiverId)) throw new AppException(ErrorMessage.SAME_USER);
-        //Check if the other person has sent you a friend request
-        Optional<Friend> existingFriendRequested = friendRepository.findByUserIdAndFriendId(sender.getId(), receiverId);
-        if (existingFriendRequested.isPresent()) {
-            handleExistingFriend(existingFriendRequested.get());
-            return;
-        }
-        //Check to see if you've sent a friend request to someone else
-        //cancel
-        Optional<Friend> reverseFriend = friendRepository.findByUserIdAndFriendId(receiverId, sender.getId());
-        if (reverseFriend.isPresent()) {
-            handleReverseFriend(reverseFriend.get());
-            return;
-        }
-        createNewFriendRequest(sender, receiverId);
+
+        friendRepository.findByUserIdAndFriendId(sender.getId(), receiverId)
+                .ifPresentOrElse(
+                        friend -> {
+                            if (friend.getStatus() == FriendEnum.REQUESTED) updateStatus(friend, FriendEnum.ACCEPTED);
+                        },
+                        () -> friendRepository.findByUserIdAndFriendId(receiverId, sender.getId())
+                                .ifPresentOrElse(
+                                        friend -> {
+                                            if (friend.getStatus() == FriendEnum.REQUESTED)
+                                                friendRepository.deleteById(friend.getId());
+                                        },
+                                        () -> createFriendRequest(sender, receiverId))
+                );
     }
 
     @Override
     public void acceptFriendRequest(String friendId) {
-        String userId = userService.getCurrentUser().getId();
-        friendRepository.findByUserIdAndFriendId(userId, friendId)
-                .ifPresentOrElse(friend -> {
-                    if (FriendEnum.REQUESTED.equals(friend.getStatus())) {
-                        friend.setStatus(FriendEnum.ACCEPTED);
-                        friendRepository.save(friend);
-                    }
-                }, () -> {
-                    throw new AppException(ErrorMessage.BAD_REQUEST);
-                });
+        processFriendRequest(getCurrentUserId(), friendId, FriendEnum.REQUESTED, FriendEnum.ACCEPTED, false);
     }
 
     @Override
     public void unfriend(String friendId) {
-        String userId = userService.getCurrentUser().getId();
+        String userId = getCurrentUserId();
         friendRepository.findByUserIdAndFriendId(userId, friendId)
                 .ifPresentOrElse(friend -> {
-                    if (FriendEnum.ACCEPTED.equals(friend.getStatus())) {
+                    if (FriendEnum.ACCEPTED.equals(friend.getStatus()) || FriendEnum.REQUESTED.equals(friend.getStatus())) {
                         friendRepository.deleteById(friend.getId());
                     }
                 }, () -> {
                     friendRepository.findByUserIdAndFriendId(friendId, userId)
                             .ifPresentOrElse(friend -> {
-                                if (FriendEnum.ACCEPTED.equals(friend.getStatus())) {
+                                if (FriendEnum.ACCEPTED.equals(friend.getStatus()) || FriendEnum.REQUESTED.equals(friend.getStatus())) {
                                     friendRepository.deleteById(friend.getId());
                                 }
                             }, () -> {
                                 throw new AppException(ErrorMessage.BAD_REQUEST);
                             });
                 });
-
     }
 
     @Override
     public void block(String friendId) {
-        log.warn("Blocking friend with id: {}", friendId);
-        String userId = userService.getCurrentUser().getId();
-        friendRepository.findByUserIdAndFriendId(userId, friendId)
-                .ifPresentOrElse(friend -> {
-                    if (FriendEnum.ACCEPTED.equals(friend.getStatus())) {
-                        friend.setStatus(FriendEnum.BLOCKED);
-                        friendRepository.save(friend);
-                    }
-                    if (FriendEnum.BLOCKED.equals(friend.getStatus())) {
-                        friendRepository.deleteById(friend.getId());
-                    }
-                }, () -> {
-                    throw new AppException(ErrorMessage.BAD_REQUEST);
-                });
-
+        processFriendRequest(getCurrentUserId(), friendId, null, FriendEnum.BLOCKED, true);
     }
 
     @Override
     public List<FriendResponseDTO> getAllFriends() {
-        var user = userService.getCurrentUser();
-        return mapUtils.mapFriend(friendRepository.getAllFriends(user.getId()));
+        return mapUtils.mapFriend(friendRepository.getAllFriends(getCurrentUserId()));
     }
 
     @Override
     public List<FriendResponseDTO> getAllFriendsBlock() {
-        String userId = userService.getCurrentUser().getId();
-        return mapUtils.mapFriend(friendRepository.getAllFriendsBlock(userId));
+        return mapUtils.mapFriend(friendRepository.getAllFriendsBlock(getCurrentUserId()));
     }
 
     @Override
     public List<FriendResponseDTO> getAllFriendsRequest() {
-        String userId = userService.getCurrentUser().getId();
-        return mapUtils.mapFriend(friendRepository.getAllFriendsRequest(userId));
+        return mapUtils.mapFriend(friendRepository.getAllFriendsRequest(getCurrentUserId()));
     }
 
     @Override
     public List<FriendResponseDTO> getSuggestionFriends() {
-        String userId = userService.getCurrentUser().getId();
-        return mapUtils.mapFriend(friendRepository.getSuggestionFriends(userId));
+        return mapUtils.mapFriend(friendRepository.getSuggestionFriends(getCurrentUserId()));
     }
 
-    void handleExistingFriend(Friend friend) {
-        if (FriendEnum.REQUESTED.equals(friend.getStatus())) {
-            friend.setStatus(FriendEnum.ACCEPTED);
-            friendRepository.save(friend);
-        }
+    String getCurrentUserId() {
+        return userService.getCurrentUser().getId();
     }
 
-    void handleReverseFriend(Friend friend) {
-        if (FriendEnum.REQUESTED.equals(friend.getStatus())) {
-            friendRepository.deleteById(friend.getId());
-        }
-    }
-
-    void createNewFriendRequest(User sender, String receiverId) {
+    void createFriendRequest(User sender, String receiverId) {
         User receiver = userRepository.findById(receiverId)
                 .orElseThrow(() -> new AppException(ErrorMessage.USER_NOT_FOUND));
-
         friendRepository.save(Friend.builder()
                 .user(receiver)
                 .friend(sender)
@@ -154,4 +115,33 @@ public class FriendServiceImpl implements FriendService {
                 .build());
     }
 
+    void processFriendRequest(String userId, String friendId, FriendEnum expectedStatus, FriendEnum newStatus, boolean allowDelete) {
+        processFriend(userId, friendId, expectedStatus, newStatus, allowDelete)
+                .or(() -> processFriend(friendId, userId, expectedStatus, newStatus, allowDelete))
+                .orElseThrow(() -> new AppException(ErrorMessage.BAD_REQUEST));
+    }
+
+    Optional<Friend> processFriend(String userId, String friendId, FriendEnum expectedStatus, FriendEnum newStatus, boolean allowDelete) {
+        return friendRepository.findByUserIdAndFriendId(userId, friendId)
+                .filter(friend -> expectedStatus == null || expectedStatus.equals(friend.getStatus()))
+                .map(friend -> {
+                    if (allowDelete && newStatus.equals(friend.getStatus())) {
+                        log.info("Deleting friend: userId={}, friendId={}", userId, friendId);
+                        friendRepository.deleteById(friend.getId());
+                    } else {
+                        log.info("Updating friend status to {}: userId={}, friendId={}", newStatus, userId, friendId);
+                        updateStatus(friend, newStatus, userId, friendId);
+                    }
+                    return friend;
+                });
+    }
+
+    void updateStatus(Friend friend, FriendEnum newStatus, String... ids) {
+        friend.setStatus(newStatus);
+        if (ids.length == 2) {
+            friend.setUser(userRepository.findById(ids[0]).orElseThrow(() -> new AppException(ErrorMessage.USER_NOT_FOUND)));
+            friend.setFriend(userRepository.findById(ids[1]).orElseThrow(() -> new AppException(ErrorMessage.USER_NOT_FOUND)));
+        }
+        friendRepository.save(friend);
+    }
 }

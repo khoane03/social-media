@@ -2,6 +2,7 @@ package com.dev.social.repository;
 
 import com.dev.social.dto.result.FriendResult;
 import com.dev.social.entity.Friend;
+import com.dev.social.entity.User;
 import com.dev.social.utils.constants.FriendConst;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -55,7 +56,7 @@ public interface FriendRepository extends JpaRepository<Friend, String> {
             " WHERE ((f.user_id = :userId AND f.friend_id = u.id) " +
             " OR (f.friend_id = :userId AND f.user_id = u.id) " +
             ")" +
-            " AND f.status IN ('" + FriendConst.BLOCKED + "', '" + FriendConst.ACCEPTED + "') " +
+            " AND f.status IN ('" + FriendConst.BLOCKED + "', '" + FriendConst.ACCEPTED + "', '" + FriendConst.REQUESTED + "') " +
             ")",
             nativeQuery = true)
     List<FriendResult> getSuggestionFriends(@Param("userId") String userId);
