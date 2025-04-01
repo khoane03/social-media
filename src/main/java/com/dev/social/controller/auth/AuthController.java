@@ -12,12 +12,14 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Slf4j
 public class AuthController {
 
     AuthenticationService authenticationService;
@@ -55,7 +57,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ApiResponseDTO<String> register(@Valid @RequestBody RegisterRequestDTO req) {
+    public ApiResponseDTO<String> register(@RequestBody RegisterRequestDTO req) {
+        log.info("Register: {}", req);
         authenticationService.registerUser(req);
         return ApiResponseDTO.build(AppConst.REGISTER_SUCCESS);
     }

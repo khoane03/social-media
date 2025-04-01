@@ -94,9 +94,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public void passwordRecovery(PasswordRecoveryRequestDTO req) {
-        validate.checkPassMatch(req.getPassword(), req.getConfirmPassword());
-        userRepository.save(User.builder()
-                .password(passwordEncoder.encode(req.getPassword()))
-                .build());
+        userRepository.findByEmail(req.getEmail()).ifPresentOrElse((user) -> {
+            validate.checkPassMatch(req.getPassword(), req.getConfirmPassword());
+            user.setPassword(passwordEncoder.encode(req.getPassword()));
+            userRepository.save(user);
+        }, () -> {
+            throw new AppException(ErrorMessage.EMAIL_NOT_FOUND);
+        });
     }
 }
