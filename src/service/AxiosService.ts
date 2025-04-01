@@ -93,7 +93,6 @@ axiosInstance.interceptors.response.use(
           break;
 
         default:
-          window.location.href = '/auth';
           console.error(`Unhandled status code: ${error.response.status}`);
           break;
       }
