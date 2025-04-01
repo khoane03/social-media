@@ -26,7 +26,7 @@ export default function Home() {
 
                 {/* Outlet */}
                 <div
-                    className={`flex-[${location.pathname === "/friends" ? "9" : "6"}] overflow-y-auto px-4 scroll-smooth `}
+                    className={`${location.pathname === "/friends" ? "flex-[9]" : "flex-[6]"} overflow-y-auto px-4 scroll-smooth `}
                 >
                     <div
                         className={`${
