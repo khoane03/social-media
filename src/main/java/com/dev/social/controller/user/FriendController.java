@@ -63,6 +63,9 @@ public class FriendController {
         return ApiResponseDTO.build(FriendConst.BLOCK_SUCCESS);
     }
 
-
+    @PostMapping("/check-status")
+    public ApiResponseDTO<String> check(@RequestParam String friendId){
+        return ApiResponseDTO.build(friendService.checkStatusFriend(friendId));
+    }
 
 }

@@ -101,6 +101,15 @@ public class FriendServiceImpl implements FriendService {
         return mapUtils.mapFriend(friendRepository.getSuggestionFriends(getCurrentUserId()));
     }
 
+    @Override
+    public String checkStatusFriend(String friendId) {
+        String userId = getCurrentUserId();
+        var friend = friendRepository.findByUserIdAndFriendId(userId, friendId)
+                .or(() -> friendRepository.findByUserIdAndFriendId(friendId, userId))
+                .orElse(null);
+        return friend != null ? friend.getStatus().name() : null;
+    }
+
     String getCurrentUserId() {
         return userService.getCurrentUser().getId();
     }
@@ -126,10 +135,10 @@ public class FriendServiceImpl implements FriendService {
                 .filter(friend -> expectedStatus == null || expectedStatus.equals(friend.getStatus()))
                 .map(friend -> {
                     if (allowDelete && newStatus.equals(friend.getStatus())) {
-                        log.info("Deleting friend: userId={}, friendId={}", userId, friendId);
+
                         friendRepository.deleteById(friend.getId());
                     } else {
-                        log.info("Updating friend status to {}: userId={}, friendId={}", newStatus, userId, friendId);
+
                         updateStatus(friend, newStatus, userId, friendId);
                     }
                     return friend;
