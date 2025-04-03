@@ -33,6 +33,10 @@ const getFriendSuggestion = async () => {
     return await axios.get('/friend/suggest');
 }
 
+const checkFriend = async (formData: FormData) => {
+    return await axios.post('/friend/check-status', formData);
+}
+
 
 export default {
     getAllFriends,
@@ -42,6 +46,7 @@ export default {
     blockFriend,
     getFriendRequest,
     getFriendSuggestion,
-    getAllFriendBlock
+    getAllFriendBlock,
+    checkFriend,
 };
 
