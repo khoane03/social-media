@@ -3,7 +3,6 @@ package com.dev.social.controller.user;
 
 import com.dev.social.dto.request.user.ReactionRequest;
 import com.dev.social.dto.response.ApiResponseDTO;
-import com.dev.social.entity.Reaction;
 import com.dev.social.service.user.ReactionService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;

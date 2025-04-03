@@ -56,7 +56,7 @@ public class ReactionServiceImpl implements ReactionService {
     }
 
     @Override
-    public List<ReactionResponseDto> getReactionsByPostId(String postId) {
+    public ReactionResponseDto getReactionsByPostId(String postId) {
         var reactions = reactionRepository.findByPostId(postId);
         return mapReaction.mapReaction(reactions);
     }

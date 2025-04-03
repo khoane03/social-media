@@ -46,17 +46,19 @@ public class MapUtils {
                 .collect(Collectors.toList());
     }
 
-    public List<ReactionResponseDto> mapReaction(List<Reaction> reactions) {
-        if (reactions == null || reactions.isEmpty()) return List.of();
+    public ReactionResponseDto mapReaction(List<Reaction> reactions) {
+        if (reactions == null || reactions.isEmpty()) {
+            return new ReactionResponseDto(null);
+        }
 
-        Map<String, ReactionResponseDto> reactionMap = new LinkedHashMap<>();
+        String postId = reactions.get(0).getPost().getId();
+        ReactionResponseDto dto = new ReactionResponseDto(postId);
+
         reactions.forEach(reaction -> {
-            String postId = reaction.getPost().getId();
-            ReactionResponseDto dto = reactionMap.computeIfAbsent(postId, ReactionResponseDto::new);
-            dto.setTotalReactions(dto.getTotalReactions() + 1);
             dto.getReactions().add(new ReactionDetail(reaction));
         });
-        return new ArrayList<>(reactionMap.values());
+        dto.setTotalReactions(reactions.size());
+        return dto;
     }
 
 }
