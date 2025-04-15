@@ -23,6 +23,7 @@ public enum ErrorMessage {
     IMAGE_UPLOAD_FAILED(400_009, "Image upload failed", HttpStatus.BAD_REQUEST),
     INVALID_FEEL_TYPE(400_010, "Invalid feel type, Must be (LIKE, LOVE, HAHA, WOW, SAD, ANGRY)", HttpStatus.BAD_REQUEST),
     SAME_USER(400_011, "Can't send request to yourself", HttpStatus.BAD_REQUEST),
+    INVALID_TYPE(400_012, "Invalid type", HttpStatus.BAD_REQUEST),
 
     // code 401
     UNAUTHORIZED(401, "UNAUTHORIZED", HttpStatus.UNAUTHORIZED),
@@ -36,7 +37,8 @@ public enum ErrorMessage {
     ACC_NOT_FOUND(404_001, "Account isn't exist", HttpStatus.NOT_FOUND),
     POST_NOT_FOUND(404_002, "Post isn't exist", HttpStatus.NOT_FOUND),
     USER_NOT_FOUND(404_002, "User isn't exist", HttpStatus.NOT_FOUND),
-    EMAIL_NOT_FOUND(404_003, "Email isn't exist", HttpStatus.NOT_FOUND);
+    EMAIL_NOT_FOUND(404_003, "Email isn't exist", HttpStatus.NOT_FOUND),
+    MESSAGE_NOT_FOUND(400_004, "Message isn't exist", HttpStatus.NOT_FOUND),;
 
 
 
