@@ -1,7 +1,12 @@
 package com.dev.social.configuration;
 
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -9,21 +14,33 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@Slf4j
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+
+    final WebSocketTokenFilter webSocketTokenFilter;
 
     @Value("${define.allowed_origins}")
     String ALLOWED_ORIGINS;
 
     @Override
+    public void registerStompEndpoints(StompEndpointRegistry registry) {
+        registry.addEndpoint("/ws")
+                .setAllowedOriginPatterns(ALLOWED_ORIGINS);
+    }
+
+
+    @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.setUserDestinationPrefix("/user");
-        registry.enableSimpleBroker("/queue", "/topic");
-        registry.setApplicationDestinationPrefixes("/app");
+        registry.enableSimpleBroker("/public", "/private"); // đích gửi tin (subscribe)
+        registry.setApplicationDestinationPrefixes("/app"); // đích client gửi tin (send)
+        registry.setUserDestinationPrefix("/user"); // cho tin nhắn riêng tư
     }
 
     @Override
-    public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws-chat")
-                .setAllowedOrigins(ALLOWED_ORIGINS).withSockJS();
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(webSocketTokenFilter);
     }
+
 }
