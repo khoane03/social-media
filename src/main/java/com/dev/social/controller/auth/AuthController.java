@@ -33,7 +33,7 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ApiResponseDTO<String> logout(@Valid @RequestBody TokenRequestDTO req) {
-        authenticationService.logout(req.getAccessToken());
+        authenticationService.logout(req.getRefreshToken());
         return ApiResponseDTO.build();
     }
 

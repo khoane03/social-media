@@ -5,6 +5,7 @@ import com.dev.social.service.admin.JwtService;
 import com.dev.social.utils.exception.AppException;
 import com.dev.social.utils.exception.ErrorMessage;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,7 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication == null && username != null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                if (jwtService.validateAccessToken(token, userDetails)) {
+                if (jwtService.validateToken(token, userDetails, false)) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             username,
                             null,
@@ -54,11 +55,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
+
             }
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
-            log.error("Error : {}", e.getMessage());
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired");
+        } catch (JwtException | IllegalArgumentException e) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
         }
 
     }

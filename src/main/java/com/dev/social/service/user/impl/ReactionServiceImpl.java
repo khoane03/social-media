@@ -7,22 +7,18 @@ import com.dev.social.entity.Post;
 import com.dev.social.entity.User;
 import com.dev.social.repository.ReactionRepository;
 import com.dev.social.repository.PostRepository;
-import com.dev.social.repository.UserRepository;
 import com.dev.social.service.user.ReactionService;
 import com.dev.social.service.user.UserService;
 import com.dev.social.utils.enums.ReactionTypeEnum;
 import com.dev.social.utils.exception.AppException;
 import com.dev.social.utils.exception.ErrorMessage;
 import com.dev.social.utils.mapping.MapUtils;
-import com.dev.social.utils.validation.FeelValidate;
+import com.dev.social.utils.validation.EnumValidate;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -33,12 +29,11 @@ public class ReactionServiceImpl implements ReactionService {
     ReactionRepository reactionRepository;
     PostRepository postRepository;
     UserService userService;
-    FeelValidate feelValidate;
     MapUtils mapReaction;
 
     @Override
     public void makeFeel(ReactionRequest req) {
-        ReactionTypeEnum feelType = feelValidate.isValidFeelType(req.getReactionType());
+        ReactionTypeEnum feelType = EnumValidate.isValidEnum(ReactionTypeEnum.class, req.getReactionType(), ErrorMessage.INVALID_FEEL_TYPE);
         reactionRepository.findByPostIdAndUserId(req.getPostId(), getUser().getId())
                 .ifPresentOrElse(reaction -> {
                             if (reaction.getReactionType().equals(feelType)) {

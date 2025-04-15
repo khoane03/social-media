@@ -6,6 +6,4 @@ public class MailConst {
     public static final String MAIL_SUBJECT = "YOU OTP CODE";
     public static final String MAIL_CONTENT = "You otp code is : ";
 
-
-
 }

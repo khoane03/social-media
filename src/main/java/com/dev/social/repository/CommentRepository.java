@@ -2,9 +2,9 @@ package com.dev.social.repository;
 
 import com.dev.social.dto.result.CommentResult;
 import com.dev.social.entity.Comment;
-import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -12,7 +12,8 @@ import java.util.List;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, String> {
 
-    @Query(value = "SELECT cmt.contents," +
+    @Query(value = "SELECT cmt.id, " +
+            "       cmt.contents," +
             "       cmt.created_at," +
             "       cmt.id as postId, " +
             "       u.name, " +
