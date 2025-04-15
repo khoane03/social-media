@@ -2,11 +2,10 @@ package com.dev.social.repository;
 
 import com.dev.social.dto.result.FriendResult;
 import com.dev.social.entity.Friend;
-import com.dev.social.entity.User;
 import com.dev.social.utils.constants.FriendConst;
-import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

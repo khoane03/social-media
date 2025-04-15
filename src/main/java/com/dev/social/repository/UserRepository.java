@@ -2,11 +2,10 @@ package com.dev.social.repository;
 
 import com.dev.social.entity.User;
 import com.dev.social.utils.constants.AppConst;
-import io.lettuce.core.dynamic.annotation.Param;
-import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -32,8 +32,6 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-impl:0.12.6'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.12.6'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    implementation 'redis.clients:jedis'
     implementation group: 'com.cloudinary', name: 'cloudinary-http5', version: '2.0.0'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
 

@@ -12,12 +12,14 @@ public class AppConst {
     public static final String CONTINUE_REGISTER = "You can continue to register";
     public static final String PASSWORD_RECOVERY_SUCCESS = "Password recovery successful";
 
+    //chat
+    public static final String DELETE_ALL_MESSAGES = "Delete all messages";
 
 
     //date format
     public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
-    //
+    //auth
     public static final String REFRESH_TOKEN = "Refresh token";
     public static final String ACCESS_TOKEN = "Access token";
 
