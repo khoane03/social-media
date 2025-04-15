@@ -29,11 +29,6 @@ spring:
           auth: true
           starttls:
             enable: true
-  data:
-    redis:
-      host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
-      time-to-live: 5 #minute
 
 
 logging:
@@ -42,7 +37,8 @@ logging:
     com.zaxxer.hikari: ERROR
 
 define:
-  allowed_origins: http://localhost:5173
+  allowed_origins: http://localhost:5173,http://localhost:63342
+  white_list: /auth/**,/ws/**
   admin:
     name: DEV
     username: admin
