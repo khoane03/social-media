@@ -21,7 +21,7 @@ const sendOtp = (email: string) => {
 }
 
 const logout = (token: string) => {
-    return AxiosService.post('/auth/logout', {accessToken: token});
+    return AxiosService.post('/auth/logout', {refreshToken: token});
 }
 
 const forgotPassword = (data: object) => {

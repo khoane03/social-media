@@ -1,28 +1,31 @@
 import { Logout, MailOutline } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../../service/AuthService";
-import { getAccessToken, removeAccessToken, removeRefreshToken } from "../../service/localStoreService";
+import { getRefreshToken, removeAccessToken, removeRefreshToken } from "../../service/localStoreService";
 import Alert from "../alert/Alert";
 import { useState } from "react";
+import { useStomp } from "../../context/WsContext";
 
 // Component Menu
 const Menu = ({ open, info }: { open: boolean; info?: { id?: string | null; avatar?: string | null; name?: string | null } }) => {
     const navigate = useNavigate();
     const [message, setMessage] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
-
+    const {isConnected, disconnect} = useStomp();
     const handleLogout = async () => {
 
         try {
-            const accessToken = getAccessToken();
-            console.log("Access Token:", accessToken);
-            if (!accessToken) {
+            // Disconnect STOMP if connected
+            if (isConnected) {
+                disconnect();
+            }
+            const token = getRefreshToken();
+            if (!token) {
                 navigate("/auth");
                 return;
             }
-            
-
-            await logout(accessToken);
+        
+            await logout(token);
             setMessage("Đăng xuất thành công");
             setTimeout(() => {
                 removeAccessToken();
@@ -48,7 +51,7 @@ const Menu = ({ open, info }: { open: boolean; info?: { id?: string | null; avat
                         className="px-3 py-2 hover:bg-gray-200 rounded-md cursor-pointer flex items-center gap-3 border-b border-gray-200 pb-3"
                     >
                         <img
-                            src={info?.avatar ?? "https://via.placeholder.com/40"}
+                            src={info?.avatar ?? 'default.png'}
                             alt="Avatar"
                             className="w-10 h-10 rounded-full object-cover border border-gray-300"
                         />

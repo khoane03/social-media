@@ -16,7 +16,7 @@ const SidebarLeft = () => {
         <div className="flex-[3] overflow-y-auto h-[1000px]">
             <ul className="border-b-2 pb-1">
                 <Link to={`/profile/${user?.id}`} className="flex items-center  p-2 hover:bg-gray-200 rounded-lg">
-                    <img src={user?.avatarUrl || "https://tintuc.dienthoaigiakho.vn/wp-content/uploads/2024/01/c39af4399a87bc3d7701101b728cddc9.jpg"}
+                    <img src={user?.avatarUrl || "default.png"}
                         alt=""
                         className="mr-2 w-10 h-10 rounded-full border border-gray-400" />
                     <p className="">{user?.name}</p>

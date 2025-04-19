@@ -1,15 +1,29 @@
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams, matchPath, useNavigate } from "react-router-dom";
 import Header from "../../components/header/Header";
 import SidebarLeft from "../../components/sidebar/SidebarLeft";
 import CommingSoon from "../../components/common/CommingSoon";
 import { Outlet } from "react-router-dom";
+import { useState } from "react";
+import ViewPost from "../../components/post/ShowPost";
 
 export default function Home() {
     const location = useLocation();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const { postId } = useParams<{ postId: string }>();
+    const navigate = useNavigate();
+
+    // Kiểm tra nếu đường dẫn là /post/:postId
+    const isPostModal = matchPath("/post/:postId", location.pathname);
 
     useEffect(() => {
         document.title = "Social Media";
+
+        if (isPostModal) {
+            setIsModalOpen(true);
+        } else {
+            setIsModalOpen(false);
+        }
     }, [location.pathname]);
 
     return (
@@ -25,14 +39,9 @@ export default function Home() {
                 </div>
 
                 {/* Outlet */}
-                <div
-                    className={`${location.pathname === "/friends" ? "flex-[9]" : "flex-[6]"} overflow-y-auto px-4 scroll-smooth `}
-                >
-                    <div
-                        className={`${
-                            location.pathname === "/friends" ? "" : "max-w-[592px]"
-                        } justify-center mx-auto h-screen scroll-smooth `}
-                    >
+                <div className={`${location.pathname === "/friends" ? "flex-[9]" : "flex-[6]"} overflow-y-auto px-4 scroll-smooth `} >
+                    <div className={`${location.pathname === "/friends" ? "" : "max-w-[592px]"
+                            } justify-center mx-auto h-screen scroll-smooth `} >
                         <Outlet />
                     </div>
                 </div>
@@ -44,6 +53,15 @@ export default function Home() {
                     </div>
                 )}
             </div>
+
+            {/* Modal hiển thị nếu là /post/:postId */}
+            {isModalOpen && (
+                <ViewPost
+                    isOpen={isModalOpen}
+                    onClose={() => navigate(-1)}
+                    postId={postId} 
+                />
+            )}
         </div>
     );
 }

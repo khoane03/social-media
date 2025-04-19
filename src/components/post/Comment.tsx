@@ -1,4 +1,4 @@
-import { Comment, Send } from "@mui/icons-material";
+import { Comment, MoreHoriz, Send } from "@mui/icons-material";
 import React, { useState } from "react";
 import CommentService from "../../../service/CommentService";
 
@@ -22,6 +22,7 @@ export const Comments: React.FC<CommentsProps> = ({ postId }) => {
     const getComments = async () => {
         const resp = await CommentService.getAllComments(postId);
         setComments(resp.data);
+        console.log(resp.data);
     };
 
     const handleComment = async () => {
@@ -38,6 +39,14 @@ export const Comments: React.FC<CommentsProps> = ({ postId }) => {
         getComments();
         setContents("");
     }
+
+    // const deleteComment = async (commentId: string) => {
+    //     try {
+    //         await CommentService.deleteComment(commentId);
+    //     } catch (error) {
+    //         console.error("Error deleting comment:", error);
+    //     }
+    // };
 
     return (
         <>
@@ -64,6 +73,7 @@ export const Comments: React.FC<CommentsProps> = ({ postId }) => {
                                         <h3 className="font-bold">{comment.name}</h3>
                                         <p className="text-gray-400">{comment.contents}</p>
                                     </div>
+                                    <MoreHoriz className="text-gray-400 hover:text-gray-600 cursor-pointer mr-2" />
                                 </div>
                             )) }
                         </div>

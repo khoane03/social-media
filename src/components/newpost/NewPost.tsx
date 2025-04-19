@@ -15,7 +15,7 @@ const NewPost = () => {
                 <div className="flex justify-between items-center border-b-[1px] pb-3 ">
                     <Link to={`/profile/${user?.id}`} className="flex items-center">
                         <img
-                            src={user?.avatarUrl || "https://tintuc.dienthoaigiakho.vn/wp-content/uploads/2024/01/c39af4399a87bc3d7701101b728cddc9.jpg"}
+                            src={user?.avatarUrl || 'default.png'}
                             alt="Avatar"
                             className="mr-2 w-10 h-10 rounded-full border border-gray-400"
                         />

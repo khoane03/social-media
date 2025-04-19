@@ -12,12 +12,14 @@ import {
 } from "react";
 import UpdateImg from "./UpdateImg";
 import {
+    Link,
     NavLink,
     Outlet,
     useParams
 } from "react-router-dom";
 import FriendService from "../../../service/FriendService";
 import { useUserContext } from "../../context/UserContext";
+import ImageViewer from "../../components/view/ImageViewer";
 
 export default function Profile() {
 
@@ -45,6 +47,8 @@ export default function Profile() {
     const { user } = useUserContext();
     const { userId } = useParams<{ userId: string }>();
     const [loading, setLoading] = useState<boolean>(true);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [type, setType] = useState<string>("Avatar");
 
     const getFriends = async () => {
         try {
@@ -96,34 +100,44 @@ export default function Profile() {
             <UpdateImg
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
+                typeDefault={type}
             />
             <div className="bg-white shadow-lg">
 
                 <div className="">
                     <div className="relative mt-[61px] h-96 bg-gray-300 md:mx-40 rounded-b-lg">
-                        <img src={info?.coverUrl || 'default.png'}
+                        <img onClick={() => setSelectedImage(info?.coverUrl || 'default.png')} src={info?.coverUrl || 'default.png'}
                             alt=""
                             className="w-full h-full object-cover rounded-b-lg" />
+                        {!onlyView && (
+                            <div onClick={() => {
+                                setIsModalOpen(true)
+                                setType("Cover")
+                            }}
+                                className="absolute bg-white flex items-center -translate-y-16 right-[10px] z-10 rounded-full p-2 shadow-lg hover:bg-gray-200">
+
+                                <AddAPhoto className="p-2 cursor-pointer rounded-full bg-gray-300" fontSize="large" />
+                                <span className="pl-1">Chỉnh sửa</span>
+
+                            </div>
+                        )}
                     </div>
-                    {!onlyView && (
-                        <div onClick={() => setIsModalOpen(true)}
-                            className="absolute bg-white flex items-center -translate-y-16 right-[12%] z-10 rounded-full p-2 shadow-lg hover:bg-gray-200">
-
-                            <AddAPhoto className="p-2 cursor-pointer rounded-full bg-gray-300" fontSize="large" />
-                            <span className="pl-1">Chỉnh sửa</span>
-
-                        </div>
-                    )}
                 </div>
 
                 <div className="md:mx-40 px-4 flex">
+                    {selectedImage &&
+                        <ImageViewer image={selectedImage} onClose={() => { setSelectedImage("") }} />
+                    }
                     <div className=" w-40 h-40 rounded-full left-[2%] -translate-y-[20px]">
-                        <img src={info?.avatarUrl || 'default.png'}
+                        <img onClick={() => setSelectedImage(info?.avatarUrl || 'default.png')} src={info?.avatarUrl || 'default.png'}
                             alt=""
                             className=" w-full h-full rounded-full border-4 border-white" />
 
                         {!onlyView && (
-                            <div onClick={() => setIsModalOpen(true)}
+                            <div onClick={() => {
+                                setIsModalOpen(true)
+                                setType("Avatar")
+                            }}
                                 className="absolute bottom-2 right-2 border bg-gray-100 hover:bg-gray-200 rounded-full">
                                 <AddAPhoto className="p-2 cursor-pointer" fontSize="large" />
                             </div>
@@ -142,9 +156,9 @@ export default function Profile() {
                             <button className="py-1 px-3 bg-gray-300 rounded-lg mr-2 flex">
                                 <People className="mr-2" />
                                 Bạn bè</button>
-                            <button className="py-1 px-3 bg-blue-500 rounded-lg mr-2 text-white">
+                            <Link to={`/chat/${info?.id}`} className="py-1 px-3 bg-blue-500 rounded-lg mr-2 text-white">
                                 <Chat className="mr-2 text-gray-300" />
-                                Nhắn tin</button>
+                                Nhắn tin</Link>
                         </div>}
                     </div>
                 </div>

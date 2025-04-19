@@ -13,6 +13,23 @@ const axiosInstance = axios.create({
   baseURL: 'http://localhost:8686/api/v1',
 });
 
+let isRefreshing = false;
+let failedQueue: {
+  resolve: (token: string) => void;
+  reject: (error: any) => void;
+}[] = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach(prom => {
+    if (token) {
+      prom.resolve(token);
+    } else {
+      prom.reject(error);
+    }
+  });
+  failedQueue = [];
+};
+
 axiosInstance.interceptors.request.use(
   (config) => {
     if (!noAuthUrls.some((url) => config.url?.includes(url))) {
@@ -30,48 +47,62 @@ axiosInstance.interceptors.request.use(
 );
 
 axiosInstance.interceptors.response.use(
-  (response) => {
-    return response.data;
-  },
+  (response) => response.data,
   async (error) => {
-    if (!noAuthUrls.some((url) => error.config.url?.includes(url))) {
-      console.error("Axios error:", error);
-      console.log("calling axiosInstance.interceptors.response.use");
-      if (!error.response) {
-        console.error("Network error or server not reachable");
-        return Promise.reject(error);
+    const originalRequest = error.config;
+
+    if (
+      error.response?.status === 401 &&
+      !noAuthUrls.some((url) => originalRequest.url?.includes(url)) &&
+      !originalRequest._retry
+    ) {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({
+            resolve: (token: string) => {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
+              resolve(axiosInstance(originalRequest));
+            },
+            reject: (err) => reject(err),
+          });
+        });
       }
-      const originalRequest = error.config;
-      switch (error.response.status) {
-        case 401:
-          if (!originalRequest._retry) {
-            originalRequest._retry = true;
 
-            try {
-              const refreshToken = getRefreshToken();
-              if (refreshToken) {
-                const response = await axios.post(
-                  'http://localhost:8686/api/v1/auth/refresh',
-                  { refreshToken }
-                );
+      originalRequest._retry = true;
+      isRefreshing = true;
 
-                const newAccessToken = response.data.data.accessToken;
-                setAccessToken(newAccessToken);
+      try {
+        const refreshToken = getRefreshToken();
+        if (!refreshToken) {
+          throw new Error('No refresh token available');
+        }
 
-                originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-                return axiosInstance(originalRequest);
-              } else {
-                throw new Error('No refresh token available');
-              }
-            } catch (refreshError) {
-              removeAccessToken();
-              removeRefreshToken();
-              window.location.href = '/auth';
-              return Promise.reject(refreshError);
-            }
-          }
-          break;
+        const response = await axios.post(
+          'http://localhost:8686/api/v1/auth/refresh',
+          { refreshToken }
+        );
 
+        const newAccessToken = response.data.data.accessToken;
+        setAccessToken(newAccessToken);
+
+        processQueue(null, newAccessToken);
+
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        return axiosInstance(originalRequest);
+      } catch (refreshError) {
+        processQueue(refreshError, null);
+        removeAccessToken();
+        removeRefreshToken();
+        window.location.href = '/auth';
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
+    // Các status code khác
+    if (!noAuthUrls.some((url) => error.config.url?.includes(url))) {
+      switch (error.response?.status) {
         case 403:
           console.error("Forbidden: Access denied");
           window.location.href = '/auth';
@@ -87,7 +118,6 @@ axiosInstance.interceptors.response.use(
           if (error.response.data.errMess === 'Access Denied') {
             window.location.href = '/no-permission';
             alert("Bạn không có quyền truy cập vào trang này");
-            window.location.href = '/auth';
           }
           window.location.href = '/auth';
           break;
@@ -97,6 +127,7 @@ axiosInstance.interceptors.response.use(
           break;
       }
     }
+
     return Promise.reject(error);
   }
 );

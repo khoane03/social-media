@@ -4,6 +4,7 @@ import { CheckCircle } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import Alert from "../alert/Alert";
 import Accept from "../popup/Accept";
+import NotificationService from "../../service/NotificationService";
 
 const Friend = () => {
     const [friendReq, setFriendReq] = useState<any[]>([]);
@@ -60,6 +61,10 @@ const Friend = () => {
             formData.append("receiverId", receiverId);
             await FriendService.addFriend(formData);
             setSuccess("Gửi lời mời kết bạn thành công");
+            await NotificationService.sendNotification({
+                userId: receiverId,
+                content: "Bạn đã nhận được lời mời kết bạn mới. path: /friends",
+            });
             setFriendSug(prev => prev.filter(friend => friend.friendId !== receiverId));
         } catch (error) {
             setError("Gửi lời mời kết bạn thất bại");

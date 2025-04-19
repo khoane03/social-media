@@ -20,6 +20,7 @@ const Header = () => {
     const { user } = useUserContext();
     const [openMenu, setOpenMenu] = useState(false);
     const [openNotification, setOpenNotification] = useState(false);
+    const [unreadCount, setUnreadCount] = useState(0);
 
     return (
         <div className="w-full bg-white h-[60px] fixed flex items-center justify-between px-4 top-0 z-50 shadow-md">
@@ -75,18 +76,18 @@ const Header = () => {
                     >
                         <Notifications />
                         <Description description="Thông báo" />
-                        <span className="absolute -translate-y-2 top-0 right-0 w-5 h-5 bg-red-500 text-white text-xs font-semibold rounded-full flex items-center justify-center">
-                            3
-                        </span>
+                        {unreadCount > 0 && <span className="absolute animate-pulse -translate-y-2 top-0 right-0 w-5 h-5 bg-red-500 text-white text-xs font-semibold rounded-full flex items-center justify-center">
+                            {unreadCount || ""}
+                        </span>}
                     </div>
-                    <NotificationMenu open={openNotification} />
+                    <NotificationMenu onUpdateUnread={(count) => setUnreadCount(count)} open={openNotification} onClose={() => setOpenNotification(false)} />
                 </div>
 
                 {/* Messages */}
-                <div className="relative flex items-center justify-center w-10 h-10 bg-gray-200 rounded-full cursor-pointer">
+                <Link to={'/chat'} className="relative flex items-center justify-center w-10 h-10 bg-gray-200 rounded-full cursor-pointer">
                     <Message />
                     <Description description="Tin nhắn" />
-                </div>
+                </Link>
 
                 {/* User Avatar */}
                 <div className="relative">
@@ -95,7 +96,7 @@ const Header = () => {
                         setOpenNotification(false);
                     }}
                         className="flex items-center justify-center w-10 h-10 rounded-full cursor-pointer border border-gray-300 overflow-hidden" >
-                        <img src={user?.avatarUrl || "https://via.placeholder.com/40"}
+                        <img src={user?.avatarUrl || 'default.png'}
                             alt="avatar"
                             className="w-10 h-10 object-cover" />
                     </div>

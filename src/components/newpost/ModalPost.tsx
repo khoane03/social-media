@@ -39,6 +39,7 @@ const ModalPost = ({ isOpen, setOpen }: AddPostProps) => {
         const formData = new FormData();
         formData.append("content", content);
         files.forEach((file) => {
+            console.log("size", (file.size)/1024);
             formData.append("files", file);
         });
 
@@ -66,7 +67,13 @@ const ModalPost = ({ isOpen, setOpen }: AddPostProps) => {
     return (
         <div 
             className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 h-screen w-screen" 
-            onClick={() => setOpen(false)} // Đóng khi click nền ngoài
+            onClick={() => {
+                setOpen(false);
+                setFiles([]);
+                setContent("");
+                setError(false);
+                setMessage("");
+            }} // Đóng khi click nền ngoài
         >
             <div 
                 className="bg-white border border-gray-200 rounded-lg shadow-lg w-[90%] max-w-md max-h-[90vh] p-6 flex flex-col animate-move overflow-hidden"

@@ -15,24 +15,26 @@ import CommingSoon from "../components/common/CommingSoon";
 import Forgot from "../pages/auth/Forgot";
 import Photo from "../pages/profile/Photo";
 import Friends from "../pages/profile/Friends";
+import ChatLayout from "../layout/chats/ChatLayout";
 
 function AppRouter() {
     return (
         <Router>
             <Routes>
-            <Route path="/dashboard" element={<Dashboard />}>
+                <Route path="/dashboard" element={<Dashboard />}>
                     <Route index element={<CommingSoon />} />
-                    
+
                 </Route>
-                
+                {/* Auth page */}
                 <Route path="/auth" element={<AuthLayout />}>
                     <Route index element={<Login />} />
                     <Route path="register" element={<Register />} />
                     <Route path="forgot" element={<Forgot />} />
-                </Route>
 
+                </Route>
+                {/* Profile page */}
                 <Route
-                    path="/profile/:userId"
+                    path="/profile/:userId?"
                     element={
                         <UserProvider>
                             <Profile />
@@ -43,7 +45,7 @@ function AppRouter() {
                     <Route path="photos" element={<Photo />} />
                 </Route>
 
-                // Home page
+                {/* Home page */}
                 <Route path="/" element={
                     <UserProvider>
                         <Home />
@@ -51,8 +53,18 @@ function AppRouter() {
                 }>
                     <Route index element={<MainLayout />} />
                     <Route path="friends" element={<Friend />} />
+                    <Route path="/post/:postId" element/>
                 </Route>
+                
 
+                {/* CHAT */}
+                <Route path="/chat/:userId?" element={
+                    <UserProvider>
+                        <ChatLayout />
+                    </UserProvider>
+                }>
+                </Route>
+        
                 <Route path="*" element={<NotFound />} />
                 <Route path="/no-permission" element={<AccessDenied />} />
             </Routes>

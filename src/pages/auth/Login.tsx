@@ -15,6 +15,7 @@ import {
     VisibilityOffOutlined
 } from "@mui/icons-material";
 import Alert from "../../components/alert/Alert";
+import { useStomp } from "../../context/WsContext";
 
 
 export default function Login() {
@@ -25,6 +26,7 @@ export default function Login() {
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [remember, setRemember] = useState<boolean>(false);
     const navigate = useNavigate();
+    const {connect, isConnected} = useStomp();
 
     useEffect(() => {
         document.title = "Đăng nhập";
@@ -43,6 +45,10 @@ export default function Login() {
             setError("");
             setAccessToken(response.data.accessToken);
             setRefreshToken(response.data.refreshToken);
+            if (!isConnected) {
+                connect(response.data.accessToken);
+            }
+            
             if (remember) {
                 saveUsername(username);
                 savePassword(password);

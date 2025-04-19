@@ -8,6 +8,7 @@ import { Link, useParams } from "react-router-dom";
 import { useUserContext } from "../../context/UserContext";
 import ImageViewer from "../../components/view/ImageViewer";
 import Alert from "../../components/alert/Alert";
+import LoadingPost from "../../components/loading/LoadingPost";
 
 interface UserInfo {
     address?: string | null;
@@ -44,11 +45,12 @@ export default function MainProfile() {
 
     const fetchData = useCallback(async () => {
         try {
+            setLoading(true);
             let userData, postData;
             if (userId) {
                 [userData, postData] = await Promise.all([
                     UserService.getInfoById(userId),
-                    PostService.getPostById(userId)
+                    PostService.getPostByUserId(userId)
                 ]);
                 setInfo(userData.data);
                 setEditInfo({
@@ -60,6 +62,9 @@ export default function MainProfile() {
             }
         } catch (error) {
             setError("Failed to fetch data");
+        }
+        finally {
+            setLoading(false);
         }
         if (user && user.id) {
             setOnlyView(userId !== user.id);
@@ -204,19 +209,25 @@ export default function MainProfile() {
                 </div>
 
                 {/* Main content */}
-                <div className="max-w-[592px] flex-[6]">
-                    {posts.length <= 0 && <>
-                        <div className="bg-white shadow-lg rounded-lg p-4">
-                            <div className="font-bold text-xl border-b pb-4">Bài viết</div>
-                            <div className="mt-3 text-center">
-                                <span className="text-gray-500 text-sm">Chưa có bài viết nào</span>
-                            </div>
-                        </div>
-                    </>}
+                <div className="max-w-[592px] flex-[6] md:ml-5">
                     {!onlyView && <NewPost />}
                     <div className={`${onlyView ? 'mt-0' : 'mt-5'}`}>
-                        <Post posts={posts} />
+                        {loading ? <LoadingPost /> :
+                            <>
+                                {posts.length <= 0 && <>
+                                    <div className="bg-white shadow-lg rounded-lg p-4">
+                                        <div className="font-bold text-xl border-b pb-4">Bài viết</div>
+                                        <div className="mt-3 text-center">
+                                            <span className="text-gray-500 text-sm">Chưa có bài viết nào</span>
+                                        </div>
+                                    </div>
+
+                                </>}
+                                <Post posts={posts} />
+                            </>
+                        }
                     </div>
+
                 </div>
             </div>
         </>

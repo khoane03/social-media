@@ -15,6 +15,10 @@ const getPostById = async (id: String) => {
     return await axiosInstance.get(`/posts/${id}`);
 }
 
+const getPostByUserId = async (userId: String) => {
+    return await axiosInstance.get(`/posts/user-posts/${userId}`);
+}
+
 const deletePostById = async (postId: string) => {
     return await axiosInstance.delete(`/posts/${postId}`);
 }
@@ -24,5 +28,6 @@ export default {
     getAllPosts,
     deletePostById,
     getPostById,
-    getPostCurrent
+    getPostCurrent,
+    getPostByUserId
 };

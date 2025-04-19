@@ -15,7 +15,7 @@ const Photo = () => {
         const getAllImages = async () => {
             try {
                 if (userId) {
-                    const response = await PostService.getPostById(userId);
+                    const response = await PostService.getPostByUserId(userId)
                     const fetchedImages = response.data.flatMap((post: any) => post.images || []);
                     setImages(fetchedImages); 
                 }

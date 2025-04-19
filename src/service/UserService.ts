@@ -25,6 +25,10 @@ const updateImage = async (formData: FormData) => {
     return await AxiosService.put('/user/updateImage', formData);
 }
 
+const getUserOnline = async () => {
+    return await AxiosService.get('/user/online');
+}
+
 
 
 export default {
@@ -33,6 +37,7 @@ export default {
     getInfoById,
     updateUser,
     updateInfo,
-    updateImage
+    updateImage,
+    getUserOnline
 };
 

@@ -1,13 +1,15 @@
 import { Close, CloseOutlined } from "@mui/icons-material";
 import React, { useState } from "react";
 import UserService from "../../../service/UserService";
+
 interface ModalProps {
     isOpen: boolean;
     onClose: () => void;
+    typeDefault?: string;
 }
 
-const UpdateImg: React.FC<ModalProps> = ({ isOpen, onClose }) => {
-    const [type, setType] = useState<string>("Avatar");
+const UpdateImg: React.FC<ModalProps> = ({ isOpen, onClose, typeDefault }) => {
+    const [type, setType] = useState<string>(typeDefault || "Avatar");
     const [image, setImage] = useState<File | null>(null);
     const [preview, setPreview] = useState<string>("");
     const [error, setError] = useState(false);
@@ -26,7 +28,7 @@ const UpdateImg: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     const handleRemoveImage = () => {
         setImage(null);
         setPreview("");
-    }
+    };
 
     const handleSubmit = async () => {
         try {
@@ -54,70 +56,98 @@ const UpdateImg: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[110]">
-            <div className="bg-white rounded-lg shadow-lg w-[400px] p-6">
-                <div className="flex justify-between items-center border-b pb-2">
-                    <p className="text-xl font-bold flex-1 text-center">Cập nhật ảnh</p>
-                    <button
-                        onClick={onClose}
-                        className="text-gray-600 bg-gray-200 border rounded-full hover:text-gray-900 hover:bg-gray-300 w-8 h-8 flex items-center justify-center"
-                    >
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-[110] backdrop-blur-sm">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 relative animate-fade-in">
+                {/* Header */}
+                <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-xl font-semibold text-gray-800 text-center w-full">Cập nhật ảnh</h2>
+                    <button onClick={() => {
+                        onClose()
+                        setType("")
+                    }}
+                        className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition" >
                         <Close />
                     </button>
                 </div>
-                <div className="mt-4">
-                    <label htmlFor="type" className="block text-sm font-medium mb-1">
-                        Loại ảnh
-                    </label>
-                    <select
-                        id="type"
-                        className="w-full border rounded p-2"
-                        value={type}
-                        onChange={(e) => setType(e.target.value)}
-                    >
-                        <option value="Avatar">Ảnh đại diện</option>
-                        <option value="Cover">Ảnh bìa</option>
-                    </select>
+
+                {/* Select Type */}
+                {/* Type Selection */}
+                <div className="mb-4">
+                    <p className="text-sm font-medium text-gray-600 mb-2">Loại ảnh</p>
+                    <div className="flex gap-3">
+                        <button
+                            onClick={() => setType("Avatar")}
+                            className={`flex-1 py-2 rounded-lg border transition font-medium
+                                         ${type === "Avatar"
+                                    ? "bg-violet-600 text-white border-violet-600"
+                                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"}`}
+                        >
+                            Ảnh đại diện
+                        </button>
+                        <button
+                            onClick={() => setType("Cover")}
+                            className={`flex-1 py-2 rounded-lg border transition font-medium
+                                    ${type === "Cover"
+                                    ? "bg-violet-600 text-white border-violet-600"
+                                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"}`}
+                        >
+                            Ảnh bìa
+                        </button>
+                    </div>
                 </div>
+
+
+                {/* Error Message */}
                 {error && (
-                    <p className="text-red-500 mt-4 text-sm">
+                    <p className="text-red-500 mb-4 text-sm">
                         {message}
                     </p>
                 )}
-                <div className="mt-4 items-center flex flex-col justify-center">
+
+                {/* Image Upload */}
+                <div className="flex flex-col items-center">
                     <label
                         htmlFor="image"
-                        className="cursor-pointer mt-2 bg-violet-50 px-4 py-2 rounded-full text-violet-700 shadow-md hover:bg-violet-100 transition duration-200">
+                        className="cursor-pointer bg-violet-100 px-4 py-2 rounded-full text-violet-700 font-medium shadow hover:bg-violet-200 transition"
+                    >
                         Chọn Ảnh
                         <input
                             type="file"
                             id="image"
                             className="hidden"
                             accept="image/*"
-                            multiple
                             onChange={handleImageChange}
                         />
                     </label>
+
                     {preview && (
-                        <div className="relative mt-4 w-full">
+                        <div className="relative mt-4 w-full h-48 rounded-xl overflow-hidden shadow border border-gray-200">
                             <img
                                 src={preview}
                                 alt="Preview"
-                                className="mt-4 rounded border w-full h-40 object-cover"
+                                className="w-full h-full object-cover"
                             />
-                            <CloseOutlined onClick={handleRemoveImage}
-                                className="absolute top-6 right-2 bg-gray-200 text-black rounded-full p-2 hover:bg-gray-300" />
+                            <button
+                                onClick={handleRemoveImage}
+                                className="absolute top-2 right-2 bg-white/70 backdrop-blur-sm p-1 rounded-full hover:bg-white shadow"
+                            >
+                                <CloseOutlined fontSize="small" />
+                            </button>
                         </div>
                     )}
                 </div>
 
-                <div className="mt-4 flex justify-end space-x-2">
+                {/* Submit */}
+                <div className="mt-6">
                     <button
                         onClick={handleSubmit}
                         disabled={image === null || loading}
-                        className={`px-4 w-full py-2 ${loading ? "bg-green-400" : "bg-purple-500 hover:bg-purple-600"} text-white font-bold rounded-lg `}
+                        className={`w-full py-2 rounded-lg text-white font-semibold transition duration-200 ${image && !loading
+                            ? "bg-violet-600 hover:bg-violet-700"
+                            : "bg-gray-300 cursor-not-allowed"
+                            }`}
                     >
-                        {!loading ? "Cập nhật" : "Đang xử lý..."}
+                        {loading ? "Đang xử lý..." : "Cập nhật"}
                     </button>
                 </div>
             </div>
