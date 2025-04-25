@@ -2,6 +2,7 @@ package com.dev.social.service.user.impl;
 
 import com.dev.social.dto.request.user.ChatRequestDTO;
 import com.dev.social.dto.request.user.DeleteChatRequestDTO;
+import com.dev.social.dto.request.user.NotificationRequestDTO;
 import com.dev.social.dto.response.ChatResponseDTO;
 import com.dev.social.dto.response.ListChatResponseDTO;
 import com.dev.social.entity.Chat;
@@ -9,6 +10,8 @@ import com.dev.social.entity.User;
 import com.dev.social.repository.ChatRepository;
 import com.dev.social.repository.UserRepository;
 import com.dev.social.service.user.ChatService;
+import com.dev.social.service.user.NotificationService;
+import com.dev.social.utils.constants.AppConst;
 import com.dev.social.utils.enums.DeleteChatTypeEnum;
 import com.dev.social.utils.exception.AppException;
 import com.dev.social.utils.exception.ErrorMessage;
@@ -30,6 +33,7 @@ public class ChatServiceImpl implements ChatService {
 
     ChatRepository chatRepository;
     UserRepository userRepository;
+    NotificationService notificationService;
 
     @Override
     public ChatResponseDTO addChat(ChatRequestDTO chatRequestDTO) {
@@ -37,6 +41,13 @@ public class ChatServiceImpl implements ChatService {
                 .orElseThrow(() -> new AppException(ErrorMessage.USER_NOT_FOUND));
         User sender = userRepository.findByUsername(chatRequestDTO.getSender())
                 .orElseThrow(() -> new AppException(ErrorMessage.USER_NOT_FOUND));
+
+        // send notification
+        notificationService.createNotification(NotificationRequestDTO.builder()
+                .content(AppConst.NEW_MESSAGE)
+                .userId(recipient.getId())
+                .build());
+
         return new ChatResponseDTO(chatRepository.save(
                 Chat.builder()
                         .sender(sender)
@@ -44,6 +55,7 @@ public class ChatServiceImpl implements ChatService {
                         .contents(chatRequestDTO.getContent())
                         .build()
         ));
+
     }
 
     @Override

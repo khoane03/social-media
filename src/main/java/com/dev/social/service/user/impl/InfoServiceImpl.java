@@ -1,5 +1,6 @@
 package com.dev.social.service.user.impl;
 
+import com.dev.social.dto.request.user.NotificationRequestDTO;
 import com.dev.social.dto.request.user.UpdateUserInfo;
 import com.dev.social.entity.Info;
 import com.dev.social.entity.User;
@@ -7,7 +8,9 @@ import com.dev.social.repository.UserRepository;
 import com.dev.social.service.admin.JwtService;
 import com.dev.social.service.admin.impl.JwtServiceImpl;
 import com.dev.social.service.user.InfoService;
+import com.dev.social.service.user.NotificationService;
 import com.dev.social.service.user.UserService;
+import com.dev.social.utils.constants.AppConst;
 import com.dev.social.utils.exception.AppException;
 import com.dev.social.utils.exception.ErrorMessage;
 import lombok.AccessLevel;
@@ -22,6 +25,7 @@ public class InfoServiceImpl implements InfoService {
 
     UserRepository userRepository;
     UserService userService;
+    NotificationService notificationService;
 
     @Override
     public void updateInfo(UpdateUserInfo req) {
@@ -39,8 +43,13 @@ public class InfoServiceImpl implements InfoService {
             info.setAddress(req.getAddress());
             info.setGender(req.getGender());
             info.setUser(user);
-
         }
+
+        // send notification
+        notificationService.createNotification(NotificationRequestDTO.builder()
+                .userId(user.getId())
+                .content(AppConst.UPDATE_INFO)
+                .build());
         userRepository.save(user);
     }
 }

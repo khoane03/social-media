@@ -4,6 +4,7 @@ import com.dev.social.dto.request.auth.LoginRequestDTO;
 import com.dev.social.dto.request.auth.PasswordRecoveryRequestDTO;
 import com.dev.social.dto.request.auth.RegisterRequestDTO;
 import com.dev.social.dto.request.auth.TokenRequestDTO;
+import com.dev.social.dto.request.user.NotificationRequestDTO;
 import com.dev.social.dto.response.AuthResponseDTO;
 import com.dev.social.entity.Role;
 import com.dev.social.entity.User;
@@ -11,6 +12,7 @@ import com.dev.social.repository.RolesRepository;
 import com.dev.social.repository.UserRepository;
 import com.dev.social.service.admin.JwtService;
 import com.dev.social.service.auth.AuthenticationService;
+import com.dev.social.service.user.NotificationService;
 import com.dev.social.utils.constants.AppConst;
 import com.dev.social.utils.enums.RolesEnum;
 import com.dev.social.utils.exception.AppException;
@@ -40,6 +42,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     UserRepository userRepository;
     RolesRepository rolesRepository;
     RegisterValidate validate;
+    NotificationService notificationService;
 
     @Override
     public AuthResponseDTO login(LoginRequestDTO loginRequestDTO) {
@@ -81,7 +84,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .orElseGet(() -> rolesRepository.save(Role.builder()
                         .roleName(RolesEnum.ROLE_USER.name())
                         .build()));
-        userRepository.save(User.builder()
+        var userRegister = userRepository.save(User.builder()
                 .name(registerRequestDTO.getName())
                 .username(registerRequestDTO.getUsername())
                 .password(passwordEncoder.encode(registerRequestDTO.getPassword()))
@@ -89,6 +92,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .phone(registerRequestDTO.getPhone())
                 .roles(new HashSet<>(Set.of(role)))
                 .status(AppConst.ACTIVE)
+                .build());
+        // send notification
+        notificationService.createNotification(NotificationRequestDTO.builder()
+                .userId(userRegister.getId())
+                .content(AppConst.NEW_COMMENT)
                 .build());
     }
 

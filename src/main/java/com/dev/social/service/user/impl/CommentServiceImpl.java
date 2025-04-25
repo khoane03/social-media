@@ -1,5 +1,6 @@
 package com.dev.social.service.user.impl;
 
+import com.dev.social.dto.request.user.NotificationRequestDTO;
 import com.dev.social.dto.result.CommentResult;
 import com.dev.social.dto.request.user.CommentRequestDTO;
 import com.dev.social.entity.Comment;
@@ -7,6 +8,8 @@ import com.dev.social.repository.CommentRepository;
 import com.dev.social.repository.PostRepository;
 import com.dev.social.repository.UserRepository;
 import com.dev.social.service.user.CommentService;
+import com.dev.social.service.user.NotificationService;
+import com.dev.social.utils.constants.AppConst;
 import com.dev.social.utils.exception.AppException;
 import com.dev.social.utils.exception.ErrorMessage;
 import lombok.AccessLevel;
@@ -25,17 +28,28 @@ public class CommentServiceImpl implements CommentService {
     CommentRepository commentRepository;
     UserRepository userRepository;
     PostRepository postRepository;
+    NotificationService notificationService;
 
     @Override
     public void addComment(CommentRequestDTO req) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        var post = postRepository.findById(req.getPostId())
+                .orElseThrow(() -> new AppException(ErrorMessage.POST_NOT_FOUND));
+
         commentRepository.save(Comment.builder()
-                        .contents(req.getContent())
-                        .post(postRepository.findById(req.getPostId())
-                                .orElseThrow(() -> new AppException(ErrorMessage.POST_NOT_FOUND)))
-                        .user(userRepository.findByUsername(username)
-                                .orElseThrow(() -> new AppException(ErrorMessage.USER_NOT_FOUND)))
+                .contents(req.getContent())
+                .post(post)
+                .user(userRepository.findByUsername(username)
+                        .orElseThrow(() -> new AppException(ErrorMessage.USER_NOT_FOUND)))
                 .build());
+
+        // send notification
+        notificationService.createNotification(NotificationRequestDTO.builder()
+                .userId(post.getUser().getId())
+                .content(AppConst.NEW_COMMENT)
+                .build());
+
     }
 
     @Override

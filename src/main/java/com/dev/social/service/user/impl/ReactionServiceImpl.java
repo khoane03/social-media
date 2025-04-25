@@ -1,5 +1,6 @@
 package com.dev.social.service.user.impl;
 
+import com.dev.social.dto.request.user.NotificationRequestDTO;
 import com.dev.social.dto.request.user.ReactionRequest;
 import com.dev.social.dto.response.ReactionResponseDto;
 import com.dev.social.entity.Reaction;
@@ -7,8 +8,10 @@ import com.dev.social.entity.Post;
 import com.dev.social.entity.User;
 import com.dev.social.repository.ReactionRepository;
 import com.dev.social.repository.PostRepository;
+import com.dev.social.service.user.NotificationService;
 import com.dev.social.service.user.ReactionService;
 import com.dev.social.service.user.UserService;
+import com.dev.social.utils.constants.AppConst;
 import com.dev.social.utils.enums.ReactionTypeEnum;
 import com.dev.social.utils.exception.AppException;
 import com.dev.social.utils.exception.ErrorMessage;
@@ -30,6 +33,7 @@ public class ReactionServiceImpl implements ReactionService {
     PostRepository postRepository;
     UserService userService;
     MapUtils mapReaction;
+    NotificationService notificationService;
 
     @Override
     public void makeFeel(ReactionRequest req) {
@@ -48,6 +52,11 @@ public class ReactionServiceImpl implements ReactionService {
                                 .post(getPost(req.getPostId()))
                                 .user(getUser())
                                 .build()));
+        // send notification
+        notificationService.createNotification(NotificationRequestDTO.builder()
+                .userId(getPost(req.getPostId()).getUser().getId())
+                .content(AppConst.NEW_REACTION)
+                .build());
     }
 
     @Override
