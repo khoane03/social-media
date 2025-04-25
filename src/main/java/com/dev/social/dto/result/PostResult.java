@@ -1,5 +1,7 @@
 package com.dev.social.dto.result;
 
+import java.time.LocalDateTime;
+
 public interface PostResult {
     String getPostId();
     String getUserId();
@@ -7,6 +9,6 @@ public interface PostResult {
     String getAvatarUrl();
     Boolean getVerified();
     String getContents();
-    String getCreatedAt();
+    LocalDateTime getCreatedAt();
     String getImageUrl();
 }
