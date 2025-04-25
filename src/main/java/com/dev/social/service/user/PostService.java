@@ -15,6 +15,8 @@ public interface PostService {
 
     List<PostResponseDTO> getPostsByUser(String postId);
 
+    List<PostResponseDTO> getPostById(String postId);
+
     void deletePost(String id);
 
     void updatePost(Post post);

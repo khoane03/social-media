@@ -70,6 +70,11 @@ public class PostServiceImpl implements PostService {
         postRepository.deleteById(id);
     }
 
+    @Override
+    public List<PostResponseDTO> getPostById(String postId) {
+       return mapUtils.mapPost(postRepository.getPostById(postId));
+    }
+
     void deleteImageSafely(String imageUrl) {
         try {
             cloudinaryService.deleteImage(imageUrl);
