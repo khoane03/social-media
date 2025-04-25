@@ -38,7 +38,8 @@ public enum ErrorMessage {
     POST_NOT_FOUND(404_002, "Post isn't exist", HttpStatus.NOT_FOUND),
     USER_NOT_FOUND(404_002, "User isn't exist", HttpStatus.NOT_FOUND),
     EMAIL_NOT_FOUND(404_003, "Email isn't exist", HttpStatus.NOT_FOUND),
-    MESSAGE_NOT_FOUND(400_004, "Message isn't exist", HttpStatus.NOT_FOUND),;
+    MESSAGE_NOT_FOUND(400_004, "Message isn't exist", HttpStatus.NOT_FOUND),
+    NOTIFICATION_NOT_FOUND(400_005, "Notification isn't exist", HttpStatus.NOT_FOUND),;
 
 
 
