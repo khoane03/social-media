@@ -12,8 +12,13 @@ public class AppConst {
     public static final String CONTINUE_REGISTER = "You can continue to register";
     public static final String PASSWORD_RECOVERY_SUCCESS = "Password recovery successful";
 
+
     //chat
     public static final String DELETE_ALL_MESSAGES = "Delete all messages";
+
+    //notification endpoint
+    public static final String WS_PUBLIC_NOTIFICATION = "/public/notification";
+    public static final String WS_PRIVATE_NOTIFICATION = "/private/notification";
 
 
     //date format
@@ -33,4 +38,10 @@ public class AppConst {
     public static final String IMAGE_JPG = "image/jpg";
     public static final String IMAGE_PNG = "image/png";
 
+
+    //
+    public static final String NEW_FRIEND_REQUEST = "Bạn có một lời mời kết bạn mới.";
+
+    //column
+    public static final String UPDATED_AT = "updatedAt";
 }
