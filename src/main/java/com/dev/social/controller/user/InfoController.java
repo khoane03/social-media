@@ -3,6 +3,7 @@ package com.dev.social.controller.user;
 import com.dev.social.dto.request.user.UpdateUserInfo;
 import com.dev.social.dto.response.ApiResponseDTO;
 import com.dev.social.service.user.InfoService;
+import com.dev.social.utils.constants.AppConst;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -19,7 +20,7 @@ public class InfoController {
     @PutMapping()
     public ApiResponseDTO<String> updateInfo(@RequestBody UpdateUserInfo req){
         infoService.updateInfo(req);
-        return ApiResponseDTO.build();
+        return ApiResponseDTO.of(AppConst.SUCCESS);
     }
 
 }
