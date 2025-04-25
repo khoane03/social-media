@@ -12,16 +12,15 @@ import java.util.List;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, String> {
 
-    @Query(value = "SELECT cmt.id, " +
-            "       cmt.contents," +
-            "       cmt.created_at," +
+    @Query(value = "SELECT cmt.id as id , " +
+            "       cmt.contents as contents ," +
+            "       cmt.createdAt as createdAt, " +
             "       cmt.id as postId, " +
-            "       u.name, " +
-            "       u.avatar_url as avatarUrl " +
-            "FROM tbl_comments as cmt" +
-            "         LEFT JOIN tbl_users as u on cmt.user_id = u.id " +
-            "WHERE cmt.post_id = :postId",
-            nativeQuery = true)
+            "       u.name as name, " +
+            "       u.avatarUrl as avatarUrl " +
+            "FROM Comment as cmt " +
+            "JOIN cmt.user as u " +
+            "WHERE cmt.post.id = :postId")
     List<CommentResult> getCommentsByPostId(@Param("postId") String postId);
 
 }

@@ -26,6 +26,7 @@ public interface ChatRepository extends JpaRepository<Chat, String> {
     @Query("SELECT DISTINCT new com.dev.social.dto.response.ListChatResponseDTO(" +
             "CASE WHEN c.sender.id = :userId THEN c.recipient.id ELSE c.sender.id END, " +
             "CASE WHEN c.sender.id = :userId THEN c.recipient.name ELSE c.sender.name END, " +
+            "CASE WHEN c.sender.id = :userId THEN c.recipient.username ELSE c.sender.username END, " +
             "CASE WHEN c.sender.id = :userId THEN c.recipient.avatarUrl ELSE c.sender.avatarUrl END) " +
             "FROM Chat c WHERE c.sender.id = :userId OR c.recipient.id = :userId")
     List<ListChatResponseDTO> getListChatByUserId(@Param("userId") String userId);
@@ -33,6 +34,7 @@ public interface ChatRepository extends JpaRepository<Chat, String> {
     @Modifying
     @Transactional
     @Query("DELETE FROM Chat c " +
-            "WHERE c.sender.id = :senderId AND c.recipient.id = :recipientId ")
+            "WHERE (c.sender.id = :senderId AND c.recipient.id = :recipientId) OR " +
+            "(c.sender.id = :recipientId AND c.recipient.id = :senderId) ")
     void deleteAllBySenderAndRecipient(@Param("senderId") String senderId, @Param("recipientId") String recipientId);
 }
