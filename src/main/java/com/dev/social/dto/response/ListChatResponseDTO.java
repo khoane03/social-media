@@ -10,6 +10,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ListChatResponseDTO {
     String userId;
+    String name;
     String username;
     String avatarUrl;
 }
