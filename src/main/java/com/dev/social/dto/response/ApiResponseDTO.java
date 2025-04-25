@@ -6,57 +6,73 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponseDTO<T> {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = AppConst.DATE_FORMAT)
-    final LocalDateTime timestamp = LocalDateTime.now();
+    @Builder.Default
+    LocalDateTime timestamp = LocalDateTime.now();
+
     int code;
-    String errMess;
     String message;
+    String errMess;
     T data;
-    int total;
+    Integer pageIndex;
+    Integer pageSize;
+    Integer totalElements;
+    Integer totalPages;
 
+    // factory method: build from simple objects
+    public static <T> ApiResponseDTO<T> of(T data) {
+        ApiResponseDTOBuilder<T> builder = ApiResponseDTO.<T>builder()
+                .code(HttpStatus.OK.value())
+                .message(AppConst.SUCCESS)
+                .data(data);
 
-    public static <T> ApiResponseDTO<T> build(T data){
-        ApiResponseDTO<T> apiResponseDTO = new ApiResponseDTO<>();
-        apiResponseDTO.setCode(HttpStatus.OK.value());
-        apiResponseDTO.setData(data);
-        apiResponseDTO.setMessage(AppConst.SUCCESS);
-        if (data instanceof Collection) {
-            apiResponseDTO.total = ((Collection<?>) data).size();
+        if (data instanceof Collection<?> collection) {
+            builder.totalElements(collection.size());
         }
-        return apiResponseDTO;
+
+        return builder.build();
     }
 
-    public static <T> ApiResponseDTO<T> buildException(ErrorMessage err){
-        ApiResponseDTO<T> apiResponseDTO = new ApiResponseDTO<>();
-        apiResponseDTO.setCode(err.getCode());
-        apiResponseDTO.setErrMess(err.getMessage());
-        return apiResponseDTO;
+    // Factory method: build from Page<>
+    public static <T> ApiResponseDTO<Collection<T>> of(Page<T> pageData) {
+        return ApiResponseDTO.<Collection<T>>builder()
+                .code(HttpStatus.OK.value())
+                .message(AppConst.SUCCESS)
+                .data(pageData.getContent())
+                .pageIndex(pageData.getNumber() + 1)
+                .pageSize(pageData.getSize())
+                .totalElements((int) pageData.getTotalElements())
+                .totalPages(pageData.getTotalPages())
+                .build();
     }
 
-    public static <T> ApiResponseDTO<T> buildException(String err, int code){
-        ApiResponseDTO<T> apiResponseDTO = new ApiResponseDTO<>();
-        apiResponseDTO.setCode(code);
-        apiResponseDTO.setErrMess(err);
-        return apiResponseDTO;
+    // Factory: build exception from ErrorMessage
+    public static <T> ApiResponseDTO<T> error(ErrorMessage err) {
+        return ApiResponseDTO.<T>builder()
+                .code(err.getCode())
+                .errMess(err.getMessage())
+                .build();
     }
 
-    public static <T> ApiResponseDTO<T> build(){
-        ApiResponseDTO<T> apiResponseDTO = new ApiResponseDTO<>();
-        apiResponseDTO.setCode(HttpStatus.OK.value());
-        apiResponseDTO.setMessage(AppConst.SUCCESS);
-        return apiResponseDTO;
+    // Factory: build exception from String
+    public static <T> ApiResponseDTO<T> error(String message, int code) {
+        return ApiResponseDTO.<T>builder()
+                .code(code)
+                .errMess(message)
+                .build();
     }
 }
