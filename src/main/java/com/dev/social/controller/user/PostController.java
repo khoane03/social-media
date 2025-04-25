@@ -24,26 +24,26 @@ public class PostController {
     @PostMapping()
     public ApiResponseDTO<String> createPost(@ModelAttribute PostRequest req) throws IOException {
         postService.addPost(req);
-        return ApiResponseDTO.build(AppConst.SUCCESS);
+        return ApiResponseDTO.of(AppConst.SUCCESS);
     }
 
     @GetMapping()
     public ApiResponseDTO<List<PostResponseDTO>> getAllPosts() {
-        return ApiResponseDTO.build(postService.getAllPosts());
+        return ApiResponseDTO.of(postService.getAllPosts());
     }
 
-    @GetMapping("/user-posts")
-    public ApiResponseDTO<List<PostResponseDTO>> getPostsByUser() {
-        return ApiResponseDTO.build(postService.getPostsByUser(""));
+    @GetMapping("/user-posts/{userId}")
+    public ApiResponseDTO<List<PostResponseDTO>> getPostsByUser(@PathVariable("userId") String userId) {
+        return ApiResponseDTO.of(postService.getPostsByUser(userId));
     }
     @GetMapping("/{id}")
-    public ApiResponseDTO<List<PostResponseDTO>> getPostsById(@PathVariable String id) {
-        return ApiResponseDTO.build(postService.getPostsByUser(id));
+    public ApiResponseDTO<List<PostResponseDTO>> getPostsById(@PathVariable("id") String id) {
+        return ApiResponseDTO.of(postService.getPostById(id));
     }
 
     @DeleteMapping("/{id}")
     public ApiResponseDTO<String> deletePost(@PathVariable String id) {
         postService.deletePost(id);
-        return ApiResponseDTO.build(AppConst.SUCCESS);
+        return ApiResponseDTO.of(AppConst.SUCCESS);
     }
 }

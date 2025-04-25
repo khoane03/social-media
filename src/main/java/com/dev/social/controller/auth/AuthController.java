@@ -28,24 +28,24 @@ public class AuthController {
 
     @PostMapping("/login")
     public ApiResponseDTO<AuthResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
-        return ApiResponseDTO.build(authenticationService.login(loginRequestDTO));
+        return ApiResponseDTO.of(authenticationService.login(loginRequestDTO));
     }
 
     @PostMapping("/logout")
     public ApiResponseDTO<String> logout(@Valid @RequestBody TokenRequestDTO req) {
         authenticationService.logout(req.getRefreshToken());
-        return ApiResponseDTO.build();
+        return ApiResponseDTO.of(AppConst.SUCCESS);
     }
 
     @PostMapping("/refresh")
     public ApiResponseDTO<AuthResponseDTO> refreshToken(@RequestBody TokenRequestDTO refreshToken) {
-        return ApiResponseDTO.build(authenticationService.refreshToken(refreshToken));
+        return ApiResponseDTO.of(authenticationService.refreshToken(refreshToken));
     }
 
     @PostMapping("/send-otp")
     public ApiResponseDTO<String> registerEmail(@Valid @RequestBody OtpVerificationRequestDTO req) {
         otpService.generateAndSendOtp(req.getEmail());
-        return ApiResponseDTO.build(AppConst.SEND_MAIL_SUCCESS);
+        return ApiResponseDTO.of(AppConst.SEND_MAIL_SUCCESS);
     }
 
     @PostMapping("/verify-otp")
@@ -53,20 +53,20 @@ public class AuthController {
         if(!otpService.verifyOtp(req.getEmail(), req.getOtpCode())){
             throw new AppException(ErrorMessage.INVALID_OTP);
         }
-        return ApiResponseDTO.build(AppConst.CONTINUE_REGISTER);
+        return ApiResponseDTO.of(AppConst.CONTINUE_REGISTER);
     }
 
     @PostMapping("/register")
     public ApiResponseDTO<String> register(@RequestBody RegisterRequestDTO req) {
         log.info("Register: {}", req);
         authenticationService.registerUser(req);
-        return ApiResponseDTO.build(AppConst.REGISTER_SUCCESS);
+        return ApiResponseDTO.of(AppConst.REGISTER_SUCCESS);
     }
 
     @PostMapping("/recovery-password")
     public ApiResponseDTO<String> forgotPass(@Valid @RequestBody PasswordRecoveryRequestDTO req) {
         authenticationService.passwordRecovery(req);
-        return ApiResponseDTO.build(AppConst.PASSWORD_RECOVERY_SUCCESS);
+        return ApiResponseDTO.of(AppConst.PASSWORD_RECOVERY_SUCCESS);
     }
 
 }

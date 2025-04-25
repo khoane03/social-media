@@ -4,6 +4,7 @@ package com.dev.social.controller.user;
 import com.dev.social.dto.request.user.ReactionRequest;
 import com.dev.social.dto.response.ApiResponseDTO;
 import com.dev.social.service.user.ReactionService;
+import com.dev.social.utils.constants.AppConst;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -21,12 +22,12 @@ public class ReactionController {
     @PostMapping()
     public ApiResponseDTO<?> createReaction(@Valid @RequestBody ReactionRequest reaction) {
         reactionService.makeFeel(reaction);
-        return ApiResponseDTO.build();
+        return ApiResponseDTO.of(AppConst.SUCCESS);
     }
 
     @GetMapping("/{postId}")
     public ApiResponseDTO<?> getReactionsByPostId(@PathVariable String postId) {
-        return ApiResponseDTO.build(reactionService.getReactionsByPostId(postId));
+        return ApiResponseDTO.of(reactionService.getReactionsByPostId(postId));
     }
 
 }

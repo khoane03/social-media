@@ -6,6 +6,7 @@ import com.dev.social.dto.response.ApiResponseDTO;
 import com.dev.social.dto.response.ChatResponseDTO;
 import com.dev.social.dto.response.ListChatResponseDTO;
 import com.dev.social.service.user.ChatService;
+import com.dev.social.utils.constants.AppConst;
 import com.dev.social.utils.exception.AppException;
 import com.dev.social.utils.exception.ErrorMessage;
 import lombok.AccessLevel;
@@ -31,7 +32,7 @@ public class ChatController {
     final SimpMessagingTemplate messagingTemplate;
 
     @MessageMapping("/chat")
-    public void sendMessage(@Payload ChatRequestDTO req, Principal principal) {
+    public void sendMessage(@Payload ChatRequestDTO req) {
         try {
             var response = chatService.addChat(req);
             messagingTemplate.convertAndSendToUser(req.getRecipient(), "/private/chat", response);
@@ -44,17 +45,17 @@ public class ChatController {
 
     @GetMapping("/{id}")
     public ApiResponseDTO<List<ChatResponseDTO>> getChatById(@PathVariable("id") String id, Principal principal) {
-        return ApiResponseDTO.build(chatService.getHistory(id, principal));
+        return ApiResponseDTO.of(chatService.getHistory(id, principal));
     }
 
     @GetMapping("/list-chat")
     public ApiResponseDTO<List<ListChatResponseDTO>> getListChatRealTime(Principal principal) {
-        return ApiResponseDTO.build(chatService.getListChat(principal));
+        return ApiResponseDTO.of(chatService.getListChat(principal));
     }
 
     @DeleteMapping()
     public ApiResponseDTO<String> deleteChat(@RequestBody DeleteChatRequestDTO req) {
         chatService.deleteChat(req);
-        return ApiResponseDTO.build();
+        return ApiResponseDTO.of(AppConst.SUCCESS);
     }
 }
