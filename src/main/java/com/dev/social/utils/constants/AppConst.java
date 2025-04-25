@@ -39,8 +39,12 @@ public class AppConst {
     public static final String IMAGE_PNG = "image/png";
 
 
-    //
+    //notification
     public static final String NEW_FRIEND_REQUEST = "Bạn có một lời mời kết bạn mới.";
+    public static final String NEW_MESSAGE = "Bạn có một tin nhắn mới.";
+    public static final String NEW_COMMENT = "Bạn có một bình luận mới.";
+    public static final String NEW_REACTION = "Bạn có một lượt cảm xúc mới.";
+    public static final String UPDATE_INFO = "Cập nhật thông tin thành công.";
 
     //column
     public static final String UPDATED_AT = "updatedAt";
