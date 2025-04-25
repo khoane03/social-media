@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class PostResponseDTO {
     String avatarUrl;
     Boolean isVerified;
     String postContent;
-    String createdAt;
+    LocalDateTime createdAt;
     List<String> images;
 
     public PostResponseDTO(PostResult postResult) {
