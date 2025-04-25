@@ -2,6 +2,7 @@ package com.dev.social.service.user;
 
 import com.dev.social.dto.response.UserResponseDTO;
 import com.dev.social.entity.User;
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -9,7 +10,7 @@ import java.security.Principal;
 import java.util.List;
 
 public interface UserService {
-    List<UserResponseDTO> getAllUser(int pageIndex, int pageSize);
+    Page<UserResponseDTO> getAllUser(int pageIndex, int pageSize);
 
     UserResponseDTO getInfo();
 
