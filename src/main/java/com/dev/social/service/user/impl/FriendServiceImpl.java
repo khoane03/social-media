@@ -1,12 +1,16 @@
 package com.dev.social.service.user.impl;
 
+import com.dev.social.dto.request.user.NotificationRequestDTO;
 import com.dev.social.dto.response.FriendResponseDTO;
+import com.dev.social.dto.response.NotificationResponseDTO;
 import com.dev.social.entity.Friend;
 import com.dev.social.entity.User;
 import com.dev.social.repository.FriendRepository;
 import com.dev.social.repository.UserRepository;
 import com.dev.social.service.user.FriendService;
+import com.dev.social.service.user.NotificationService;
 import com.dev.social.service.user.UserService;
+import com.dev.social.utils.constants.AppConst;
 import com.dev.social.utils.enums.FriendEnum;
 import com.dev.social.utils.exception.AppException;
 import com.dev.social.utils.exception.ErrorMessage;
@@ -30,6 +34,7 @@ public class FriendServiceImpl implements FriendService {
     final UserRepository userRepository;
     final UserService userService;
     final MapUtils mapUtils;
+    final NotificationService notificationService;
 
     @Override
     public void sendFriendRequest(String receiverId) {
@@ -122,6 +127,12 @@ public class FriendServiceImpl implements FriendService {
                 .friend(sender)
                 .status(FriendEnum.REQUESTED)
                 .build());
+
+        // Send notification to the receiver
+        notificationService.createNotification(NotificationRequestDTO.builder()
+                .content(AppConst.NEW_FRIEND_REQUEST)
+                .userId(receiver.getId())
+                .build());
     }
 
     void processFriendRequest(String userId, String friendId, FriendEnum expectedStatus, FriendEnum newStatus, boolean allowDelete) {
@@ -135,10 +146,8 @@ public class FriendServiceImpl implements FriendService {
                 .filter(friend -> expectedStatus == null || expectedStatus.equals(friend.getStatus()))
                 .map(friend -> {
                     if (allowDelete && newStatus.equals(friend.getStatus())) {
-
                         friendRepository.deleteById(friend.getId());
                     } else {
-
                         updateStatus(friend, newStatus, userId, friendId);
                     }
                     return friend;
