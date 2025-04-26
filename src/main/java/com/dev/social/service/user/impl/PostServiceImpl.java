@@ -16,6 +16,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,12 +48,17 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostResponseDTO> getAllPosts() {
-        return mapUtils.mapPost(postRepository.getPosts());
+        return mapUtils.mapPost(postRepository.getAllPosts());
+    }
+
+    @Override
+    public List<PostResponseDTO> getFriendPost() {
+        return mapUtils.mapPost(postRepository.getFriendsPosts(userService.getCurrentUser().getId()));
     }
 
     @Override
     public List<PostResponseDTO> getPostsByUser(String id) {
-        if(id == null || id.isEmpty()) {
+        if (id == null || id.isEmpty()) {
             return mapUtils.
                     mapPost(postRepository.getPostsByUserId(userService.getCurrentUser().getId()));
         }
@@ -72,7 +80,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostResponseDTO> getPostById(String postId) {
-       return mapUtils.mapPost(postRepository.getPostById(postId));
+        return mapUtils.mapPost(postRepository.getPostById(postId));
     }
 
     void deleteImageSafely(String imageUrl) {

@@ -32,12 +32,18 @@ public class PostController {
         return ApiResponseDTO.of(postService.getAllPosts());
     }
 
+    @GetMapping("/friend-posts")
+    public ApiResponseDTO<List<PostResponseDTO>> getFriendPost(){
+        return ApiResponseDTO.of(postService.getFriendPost());
+    }
+
     @GetMapping("/user-posts/{userId}")
     public ApiResponseDTO<List<PostResponseDTO>> getPostsByUser(@PathVariable("userId") String userId) {
         return ApiResponseDTO.of(postService.getPostsByUser(userId));
     }
+    
     @GetMapping("/{id}")
-    public ApiResponseDTO<List<PostResponseDTO>> getPostsById(@PathVariable("id") String id) {
+    public ApiResponseDTO<?> getPostsById(@PathVariable("id") String id) {
         return ApiResponseDTO.of(postService.getPostById(id));
     }
 

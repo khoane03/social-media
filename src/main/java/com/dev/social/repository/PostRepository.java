@@ -12,19 +12,42 @@ import java.util.List;
 @Repository
 public interface PostRepository extends JpaRepository<Post, String> {
     @Query(value = "select p.id as postId," +
-            "       p.user_id," +
-            "       u.name, " +
-            "       u.avatar_url as avatarUrl, " +
-            "       u.is_verified as verified, " +
-            "       p.contents," +
-            "       p.created_at," +
-            "       pm.image_url " +
-            "FROM tbl_posts p " +
-            "LEFT JOIN tbl_posts_images pm on p.id = pm.post_id " +
-            "LEFT JOIN tbl_users u on p.user_id = u.id " +
-            "ORDER BY p.created_at DESC ",
-            nativeQuery = true)
-    List<PostResult> getPosts();
+            "       p.user.id as userId," +
+            "       u.name as name, " +
+            "       u.avatarUrl as avatarUrl , " +
+            "       u.isVerified as verified, " +
+            "       p.contents as contents," +
+            "       p.createdAt as createdAt," +
+            "       img.imageUrl as imageUrl " +
+            "FROM Post p " +
+            "JOIN p.images img " +
+            "JOIN p.user u ")
+    List<PostResult> getAllPosts();
+
+    @Query("""
+            SELECT
+               p.id as postId,
+               p.user.id as userId,
+               u.name as name,
+               u.avatarUrl as avatarUrl ,
+               u.isVerified as verified,
+               p.contents as contents,
+               p.createdAt as createdAt,
+               img.imageUrl as imageUrl
+            FROM Post p
+               JOIN p.images img
+               JOIN p.user u
+            WHERE p.user.id IN (
+                    SELECT f.friend.id FROM Friend f
+                    WHERE f.user.id = :currentUserId AND f.status = 'ACCEPTED'
+            
+                    UNION
+            
+                    SELECT f.user.id FROM Friend f
+                    WHERE f.friend.id = :currentUserId AND f.status = 'ACCEPTED')
+                 OR p.user.id = :currentUserId
+            """)
+    List<PostResult> getFriendsPosts(@Param("currentUserId") String currentUserId);
 
     @Query(value = "select p.id as postId," +
             "       p.user.id as userId," +
@@ -35,8 +58,8 @@ public interface PostRepository extends JpaRepository<Post, String> {
             "       p.createdAt as createdAt," +
             "       img.imageUrl as imageUrl " +
             "FROM Post p " +
-            "LEFT JOIN p.images img " +
-            "LEFT JOIN p.user u " +
+            "JOIN p.images img " +
+            "JOIN p.user u " +
             "WHERE p.id = :userId")
     List<PostResult> getPostsByUserId(@Param("userId") String userId);
 
@@ -49,8 +72,8 @@ public interface PostRepository extends JpaRepository<Post, String> {
             "       p.createdAt as createdAt," +
             "       img.imageUrl as imageUrl " +
             "FROM Post p " +
-            "LEFT JOIN p.images img " +
-            "LEFT JOIN p.user u " +
+            "JOIN p.images img " +
+            "JOIN p.user u " +
             "WHERE p.id = :postId")
     List<PostResult> getPostById(@Param("postId") String postId);
 
