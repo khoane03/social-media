@@ -55,7 +55,7 @@ public interface FriendRepository extends JpaRepository<Friend, String> {
             " WHERE ((f.user_id = :userId AND f.friend_id = u.id) " +
             " OR (f.friend_id = :userId AND f.user_id = u.id) " +
             ")" +
-            " AND f.status IN ('" + FriendConst.BLOCKED + "', '" + FriendConst.ACCEPTED + "', '" + FriendConst.REQUESTED + "') " +
+            " AND f.status IN ('" + FriendConst.BLOCKED + "', '" + FriendConst.ACCEPTED + "') " +
             ")",
             nativeQuery = true)
     List<FriendResult> getSuggestionFriends(@Param("userId") String userId);

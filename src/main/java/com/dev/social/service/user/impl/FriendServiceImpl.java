@@ -87,32 +87,32 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public List<FriendResponseDTO> getAllFriends() {
-        return mapUtils.mapFriend(friendRepository.getAllFriends(getCurrentUserId()));
+    public List<FriendResponseDTO> getAllFriends(String userId) {
+        return mapUtils.mapFriend(friendRepository.getAllFriends(userId));
     }
 
     @Override
-    public List<FriendResponseDTO> getAllFriendsBlock() {
-        return mapUtils.mapFriend(friendRepository.getAllFriendsBlock(getCurrentUserId()));
+    public List<FriendResponseDTO> getAllFriendsBlock(String userId) {
+        return mapUtils.mapFriend(friendRepository.getAllFriendsBlock(userId));
     }
 
     @Override
-    public List<FriendResponseDTO> getAllFriendsRequest() {
-        return mapUtils.mapFriend(friendRepository.getAllFriendsRequest(getCurrentUserId()));
+    public List<FriendResponseDTO> getAllFriendsRequest(String userId) {
+        return mapUtils.mapFriend(friendRepository.getAllFriendsRequest(userId));
     }
 
     @Override
-    public List<FriendResponseDTO> getSuggestionFriends() {
-        return mapUtils.mapFriend(friendRepository.getSuggestionFriends(getCurrentUserId()));
+    public List<FriendResponseDTO> getSuggestionFriends(String userId) {
+        return mapUtils.mapFriend(friendRepository.getSuggestionFriends(userId));
     }
 
     @Override
-    public String checkStatusFriend(String friendId) {
+    public FriendResponseDTO checkStatusFriend(String friendId) {
         String userId = getCurrentUserId();
         var friend = friendRepository.findByUserIdAndFriendId(userId, friendId)
                 .or(() -> friendRepository.findByUserIdAndFriendId(friendId, userId))
                 .orElse(null);
-        return friend != null ? friend.getStatus().name() : null;
+        return friend != null ? new FriendResponseDTO(friend.getFriend().getId(), friend.getStatus().name()) : null;
     }
 
     String getCurrentUserId() {

@@ -19,24 +19,24 @@ public class FriendController {
 
     FriendService friendService;
 
-    @GetMapping("")
-    public ApiResponseDTO<List<FriendResponseDTO>> getFriends() {
-        return ApiResponseDTO.of(friendService.getAllFriends());
+    @GetMapping("/{id}")
+    public ApiResponseDTO<List<FriendResponseDTO>> getFriends(@PathVariable("id") String id) {
+        return ApiResponseDTO.of(friendService.getAllFriends(id));
     }
 
-    @GetMapping("/pending")
-    public ApiResponseDTO<List<FriendResponseDTO>> getFriendReq() {
-        return ApiResponseDTO.of(friendService.getAllFriendsRequest());
+    @GetMapping("/pending/{id}")
+    public ApiResponseDTO<List<FriendResponseDTO>> getFriendReq(@PathVariable("id") String id) {
+        return ApiResponseDTO.of(friendService.getAllFriendsRequest(id));
     }
 
-    @GetMapping("/block")
-    public ApiResponseDTO<List<FriendResponseDTO>> getFriendBlock() {
-        return ApiResponseDTO.of(friendService.getAllFriendsBlock());
+    @GetMapping("/block/{id}")
+    public ApiResponseDTO<List<FriendResponseDTO>> getFriendBlock(@PathVariable("id") String id) {
+        return ApiResponseDTO.of(friendService.getAllFriendsBlock(id));
     }
 
-    @GetMapping("/suggest")
-    public ApiResponseDTO<List<FriendResponseDTO>> getSuggest() {
-        return ApiResponseDTO.of(friendService.getSuggestionFriends());
+    @GetMapping("/suggest/{id}")
+    public ApiResponseDTO<List<FriendResponseDTO>> getSuggest(@PathVariable("id") String id) {
+        return ApiResponseDTO.of(friendService.getSuggestionFriends(id));
     }
 
     @PostMapping("/send-request")
@@ -64,7 +64,7 @@ public class FriendController {
     }
 
     @PostMapping("/check-status")
-    public ApiResponseDTO<String> check(@RequestParam String friendId){
+    public ApiResponseDTO<FriendResponseDTO> check(@RequestParam String friendId){
         return ApiResponseDTO.of(friendService.checkStatusFriend(friendId));
     }
 

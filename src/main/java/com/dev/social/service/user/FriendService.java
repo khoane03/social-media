@@ -11,17 +11,17 @@ public interface FriendService {
 
     void acceptFriendRequest(String friendId);
 
-    String checkStatusFriend(String friendId);
+    FriendResponseDTO checkStatusFriend(String friendId);
 
     void unfriend(String friendId);
 
     void block(String friendId);
 
-    List<FriendResponseDTO> getAllFriends();
+    List<FriendResponseDTO> getAllFriends(String userId);
 
-    List<FriendResponseDTO> getAllFriendsBlock();
+    List<FriendResponseDTO> getAllFriendsBlock(String userId);
 
-    List<FriendResponseDTO> getAllFriendsRequest();
+    List<FriendResponseDTO> getAllFriendsRequest(String userId);
 
-    List<FriendResponseDTO> getSuggestionFriends();
+    List<FriendResponseDTO> getSuggestionFriends(String userId);
 }
