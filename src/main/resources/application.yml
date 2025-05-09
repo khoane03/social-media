@@ -41,7 +41,7 @@ logging:
     com.zaxxer.hikari: ERROR
 
 define:
-  allowed_origins: http://localhost:5173,http://localhost:63342
+  allowed_origins: http://localhost:5173
   white_list: /auth/**,/ws/**
   admin:
     name: DEV
