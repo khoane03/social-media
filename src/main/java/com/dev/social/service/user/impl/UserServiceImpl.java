@@ -102,6 +102,13 @@ public class UserServiceImpl implements UserService {
         throw new AppException(ErrorMessage.UNAUTHORIZED);
     }
 
+    @Override
+    @PreAuthorize("hasRole('ADMIN')")
+    public void deleteUserById(String id) {
+        var user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorMessage.USER_NOT_FOUND));
+        userRepository.delete(user);
+    }
+
     void updateAvatar(User user, String imageUrl) {
         if (!imageUrl.equals(user.getAvatarUrl())) {
             user.setAvatarUrl(imageUrl);

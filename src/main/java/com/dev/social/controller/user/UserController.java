@@ -61,4 +61,10 @@ public class UserController {
     public ApiResponseDTO<Set<String>> getOnlineUsers() {
         return ApiResponseDTO.of(WebSocketEventListener.getOnlineUsers());
     }
+
+    @DeleteMapping("/{id}")
+    public ApiResponseDTO<String> deleteUser(@PathVariable(name = "id") String id){
+        userService.deleteUserById(id);
+        return ApiResponseDTO.of(AppConst.SUCCESS);
+    }
 }
