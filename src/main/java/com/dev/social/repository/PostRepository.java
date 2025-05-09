@@ -46,6 +46,7 @@ public interface PostRepository extends JpaRepository<Post, String> {
                     SELECT f.user.id FROM Friend f
                     WHERE f.friend.id = :currentUserId AND f.status = 'ACCEPTED')
                  OR p.user.id = :currentUserId
+            order by p.updatedAt desc 
             """)
     List<PostResult> getFriendsPosts(@Param("currentUserId") String currentUserId);
 
@@ -60,7 +61,8 @@ public interface PostRepository extends JpaRepository<Post, String> {
             "FROM Post p " +
             "JOIN p.images img " +
             "JOIN p.user u " +
-            "WHERE p.id = :userId")
+            "WHERE p.user.id = :userId " +
+            "order by p.updatedAt desc ")
     List<PostResult> getPostsByUserId(@Param("userId") String userId);
 
     @Query(value = "select p.id as postId," +
@@ -74,7 +76,8 @@ public interface PostRepository extends JpaRepository<Post, String> {
             "FROM Post p " +
             "JOIN p.images img " +
             "JOIN p.user u " +
-            "WHERE p.id = :postId")
+            "WHERE p.id = :postId " +
+            "order by p.updatedAt desc ")
     List<PostResult> getPostById(@Param("postId") String postId);
 
 }

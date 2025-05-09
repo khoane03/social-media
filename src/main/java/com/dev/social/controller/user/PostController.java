@@ -49,7 +49,7 @@ public class PostController {
 
     @DeleteMapping("/{id}")
     public ApiResponseDTO<String> deletePost(@PathVariable String id) {
-        postService.deletePost(id);
+        postService.deletePostById(id);
         return ApiResponseDTO.of(AppConst.SUCCESS);
     }
 }
