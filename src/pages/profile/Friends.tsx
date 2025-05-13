@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import FriendService from "../../service/FriendService";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Block, CheckCircle, MoreHoriz, PersonRemove } from "@mui/icons-material";
 import Alert from "../../components/alert/Alert";
 
@@ -10,6 +10,7 @@ const friends = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
+    const {userId} = useParams();
 
     const handleClicked = (friendId: string) => {
         setClickedFriendId(clickedFriendId === friendId ? null : friendId);
@@ -18,7 +19,7 @@ const friends = () => {
     const getAllFriends = async () => {
         try {
             setLoading(true);
-            const response = await FriendService.getAllFriends();
+            const response = await FriendService.getAllFriends(userId || '');
             setFriends(response.data);
         } catch (error) {
             setError("Failed to fetch friends");

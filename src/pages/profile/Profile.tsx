@@ -1,5 +1,5 @@
 import Header from "../../components/header/Header";
-import UserService from "../../../service/UserService";
+import UserService from "../../service/UserService";
 import {
     AddAPhoto,
     Chat,
@@ -17,7 +17,7 @@ import {
     Outlet,
     useParams
 } from "react-router-dom";
-import FriendService from "../../../service/FriendService";
+import FriendService from "../../service/FriendService";
 import { useUserContext } from "../../context/UserContext";
 import ImageViewer from "../../components/view/ImageViewer";
 
@@ -52,7 +52,7 @@ export default function Profile() {
 
     const getFriends = async () => {
         try {
-            const res = await FriendService.getAllFriends();
+            const res = await FriendService.getAllFriends(userId || '');
             setTotalFriend(res.data.length);
         } catch (error) {
             console.error("Failed to fetch friends:", error);

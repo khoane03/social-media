@@ -1,6 +1,6 @@
 import { Close, CloseOutlined } from "@mui/icons-material";
 import React, { useState } from "react";
-import UserService from "../../../service/UserService";
+import UserService from "../../service/UserService";
 
 interface ModalProps {
     isOpen: boolean;

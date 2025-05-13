@@ -1,6 +1,6 @@
 const AccessDenied = () => {
   const handleGoHome = () => {
-   window.location.href = '/';
+   window.location.href = '/auth/admin';
   };
 
   return (
@@ -13,7 +13,7 @@ const AccessDenied = () => {
             onClick={handleGoHome}
             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
           >
-            Go to Home
+            Go to Login Admin
           </button>
         </div>
       </div>

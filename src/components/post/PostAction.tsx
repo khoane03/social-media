@@ -6,7 +6,7 @@ import {
     SentimentDissatisfied
 } from "@mui/icons-material";
 import { Comments } from "./Comment";
-import CommentService from "../../../service/CommentService";
+import CommentService from "../../service/CommentService";
 import ReactionService from "../../service/ReactionService";
 import { useUserContext } from "../../context/UserContext";
 import ModalReaction from "./ModalReaction";

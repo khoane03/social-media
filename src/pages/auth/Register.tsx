@@ -1,12 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getEmailLocal, removeEmail, setEmailLocal } from '../../../service/localStoreService';
+import { getEmailLocal, removeEmail, setEmailLocal } from '../../service/localStoreService';
 import { Link, useNavigate } from 'react-router-dom';
 import Alert from '../../components/alert/Alert';
-import {
-    register as registerService,
-    sendOtp,
-    verifyOtp as verifyOtpService
-} from '../../service/AuthService';
+import AuthService from '../../service/AuthService';
 import AppConstant from '../../utils/constant/AppConstant';
 
 function Register() {
@@ -48,7 +44,7 @@ function Register() {
         e.preventDefault();
         setLoading(true);
         try {
-            await registerService(data);
+            await AuthService.register(data);
             removeEmail();
             setTimeout(() => navigate('/auth'), 2000);
         } catch (error: any) {
@@ -63,7 +59,7 @@ function Register() {
         if (!canResend) return;
         setLoading(true);
         try {
-            await sendOtp(email);
+            await AuthService.sendOtp(email);
             setOtpVisible(true);
             setCanResend(false);
             setResendTime(60);
@@ -92,7 +88,7 @@ function Register() {
     const handleVerifyOtp = useCallback(async () => {
         setLoading(true);
         try {
-            await verifyOtpService(email, otp);
+            await AuthService.verifyOtp(email, otp);
             setEmailLocal(email);
             setIsVerify(true);
             setOtpInvalid('');

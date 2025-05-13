@@ -1,7 +1,7 @@
 import NewPost from "../../components/newpost/NewPost";
 import Post from "../../components/post/Post";
-import UserService from "../../../service/UserService";
-import PostService from "../../../service/PostService";
+import UserService from "../../service/UserService";
+import PostService from "../../service/PostService";
 import { DateRange, FmdGoodOutlined, Info, Phone, Transgender } from "@mui/icons-material";
 import { useEffect, useState, useCallback } from "react";
 import { Link, useParams } from "react-router-dom";

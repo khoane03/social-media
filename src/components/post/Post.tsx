@@ -1,8 +1,12 @@
-import { CheckCircle } from "@mui/icons-material";
+import { CheckCircle, MoreHoriz } from "@mui/icons-material";
 import ImagePost from "./ImagePost";
 import { Link } from "react-router-dom";
 import React, { useMemo } from "react";
 import { PostActions } from "./PostAction";
+import PostService from "../../service/PostService";
+import Accept from "../popup/Accept";
+import { useState } from "react"; 
+import Alert from "../alert/Alert";
 
 interface Post {
     postId: string;
@@ -19,7 +23,6 @@ interface PostProps {
     posts: Post[];
 }
 
-// Tách thành pure function để có thể test độc lập
 const calculateTimeDifference = (apiTime: string): string => {
     const apiDate = new Date(apiTime);
     const currentDate = new Date();
@@ -43,66 +46,126 @@ const calculateTimeDifference = (apiTime: string): string => {
     return `${Math.floor(differenceInDays / 7)} tuần trước`;
 };
 
-// Tách thành component con để tối ưu re-render
-const PostItem = React.memo(({ post }: { post: Post }) => (
-    <div className="bg-white w-full h-auto rounded-xl shadow-md py-3 mb-4">
-    <div className="flex items-center px-4">
-        {/* Avatar và tên là Link đến profile */}
-        <Link to={`/profile/${post.userId}`} className="w-10 h-10 mr-2">
-            <img
-                src={post.avatarUrl || 'default.png'}
-                alt="Avatar"
-                className="w-10 h-10 rounded-full border border-gray-400"
-                loading="lazy"
-                decoding="async"
-            />
-        </Link>
-        <div>
-            <div className="flex items-center">
-                <Link to={`/profile/${post.userId}`} className="font-bold hover:underline">
-                    {post.name}
+interface PostItemProps {
+    post: Post;
+    onDelete: (postId: string) => void; // <-- thêm prop onDelete
+}
+
+const PostItem = React.memo(({ post, onDelete }: PostItemProps) => {
+    const [openAccept, setOpenAccept] = useState(false);
+    const [isError, setIsError] = useState(false);
+    const [message, setMessage] = useState("");
+
+    const handleDeletePost = async () => {
+        try {
+            await PostService.deletePostById(post.postId);
+            setIsError(false);  
+            setMessage("Xóa bài viết thành công");
+            onDelete(post.postId); // <-- thông báo cho component cha xoá bài
+        } catch (error) {
+            setIsError(true);
+            setMessage("Lỗi không xác định");
+        }
+    };
+
+    const handleAccept = async () => {
+        await handleDeletePost();
+        setOpenAccept(false);
+    };
+
+    const handleReject = () => {
+        setOpenAccept(false);
+    };
+
+    return (
+        <div className="bg-white w-full h-auto rounded-xl shadow-md py-3 mb-4 relative">
+            {openAccept && (
+                <Accept
+                    action="xoá"
+                    isAccept={handleAccept}
+                    isReject={handleReject}
+                />
+            )}
+
+            {message && (
+                <Alert
+                    type={isError ? "error" : "success"}
+                    message={message}
+                    onClose={() => setMessage("")}
+                />
+            )}
+
+            <button
+                className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                onClick={() => setOpenAccept(true)}
+            >
+                <MoreHoriz className="w-6 h-6" />
+            </button>
+
+            {/* Avatar và tên người dùng */}
+            <div className="flex items-center px-4">
+                <Link to={`/profile/${post.userId}`} className="w-10 h-10 mr-2">
+                    <img
+                        src={post.avatarUrl || 'default.png'}
+                        alt="Avatar"
+                        className="w-10 h-10 rounded-full border border-gray-400"
+                        loading="lazy"
+                        decoding="async"
+                    />
                 </Link>
-                {post.isVerified && (
-                    <CheckCircle className="text-blue-500 ml-1" fontSize="small" />
-                )}
+                <div>
+                    <div className="flex items-center">
+                        <Link to={`/profile/${post.userId}`} className="font-bold hover:underline">
+                            {post.name}
+                        </Link>
+                        {post.isVerified && (
+                            <CheckCircle className="text-blue-500 ml-1" fontSize="small" />
+                        )}
+                    </div>
+                    <div className="flex items-center">
+                        <span className="text-gray-500 text-sm hover:underline">
+                            {calculateTimeDifference(post.createdAt)}
+                        </span>
+                    </div>
+                </div>
             </div>
-            <div className="flex items-center">
-                <span className="text-gray-500 text-sm hover:underline">
-                    {calculateTimeDifference(post.createdAt)}
-                </span>
-            </div>
+
+            {/* Nội dung bài viết */}
+            <Link to={`/post/${post.postId}`}>
+                <div className="my-3 px-4">
+                    <p className="text-gray-600">{post.postContent}</p>
+                </div>
+
+                <div className="flex items-center justify-between pb-3">
+                    <div className="flex items-center border-none">
+                        <ImagePost images={post.images} />
+                    </div>
+                </div>
+            </Link>
+
+            <PostActions postId={post.postId} />
         </div>
-    </div>
+    );
+});
 
-    {/* Nội dung bài viết là Link đến post */}
-    <Link to={`/post/${post.postId}`}>
-        <div className="my-3 px-4">
-            <p className="text-gray-600">{post.postContent}</p>
-        </div>
-
-        <div className="flex items-center justify-between pb-3">
-            <div className="flex items-center border-none">
-                <ImagePost images={post.images} />
-            </div>
-        </div>
-    </Link>
-
-    <PostActions postId={post.postId} />
-</div>
-
-
-));
 
 const Post: React.FC<PostProps> = ({ posts }) => {
-    // Memoize posts nếu cần xử lý trước khi render
-    const memoizedPosts = useMemo(() => posts, [posts]);
+    const [postList, setPostList] = useState<Post[]>(posts); // <-- local state danh sách bài viết
+
+    const handleDeletePost = (postId: string) => {
+        setPostList((prev) => prev.filter((post) => post.postId !== postId)); // <-- xóa bài
+    };
+
+    const memoizedPosts = useMemo(() => postList, [postList]);
+
     return (
         <>
             {memoizedPosts.map((post) => (
-                <PostItem key={post.postId} post={post} />
+                <PostItem key={post.postId} post={post} onDelete={handleDeletePost} />
             ))}
         </>
     );
 };
+
 
 export default React.memo(Post);

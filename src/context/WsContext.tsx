@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { Client, IMessage, StompSubscription } from '@stomp/stompjs';
 import { getAccessToken, getRefreshToken, setAccessToken } from '../service/localStoreService';
-import { refreshToken } from '../service/AuthService';
+import AuthService from "../service/AuthService";
 
 type StompContextType = {
   connect: (token: string) => void;
@@ -33,7 +33,7 @@ export const StompProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     try {
       const refresh = getRefreshToken();
       if (!refresh) throw new Error('No refresh token found');
-      const newToken = await refreshToken(refresh);
+      const newToken = await AuthService.refreshToken(refresh);
       setAccessToken(newToken.data.accessToken);
       if (clientRef.current) {
         clientRef.current.connectHeaders = {

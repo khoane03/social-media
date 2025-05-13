@@ -13,7 +13,7 @@ export default function MainLayout() {
         const fetchPosts = async () => {
             setIsLoading(true);
             try {
-                const rep = await PostService.getAllPosts();
+                const rep = await PostService.getFriendPosts();
                 setPosts(rep.data);
             } catch (err) {
                 setError('Failed to fetch posts');

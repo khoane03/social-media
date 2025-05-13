@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import UserService from "../../service/UserService";
+import UserService from "../service/UserService";
 
 interface userInfo {
     address?: string | null;

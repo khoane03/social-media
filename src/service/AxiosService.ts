@@ -119,7 +119,7 @@ axiosInstance.interceptors.response.use(
             window.location.href = '/no-permission';
             alert("Bạn không có quyền truy cập vào trang này");
           }
-          window.location.href = '/auth';
+          // window.location.href = '/auth';
           break;
 
         default:

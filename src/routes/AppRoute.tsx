@@ -10,27 +10,35 @@ import NotFound from "../pages/error/NotFound";
 import AccessDenied from "../pages/error/AccessDenied";
 import Profile from "../pages/profile/Profile";
 import MainProfile from "../pages/profile/MainProfile";
-import { Dashboard } from "@mui/icons-material";
 import CommingSoon from "../components/common/CommingSoon";
 import Forgot from "../pages/auth/Forgot";
 import Photo from "../pages/profile/Photo";
 import Friends from "../pages/profile/Friends";
 import ChatLayout from "../layout/chats/ChatLayout";
+import Dashboard from "../layout/dashboard/Dashboard";
+import Overview from "../components/admin/manager/Overview";
+import AccountCard from "../components/admin/manager/AccountCard";
+import Info from "../components/admin/manager/Info";
+import PostsManager from "../components/admin/manager/PostsManager";
+import AdminLogin from "../components/admin/login/AdminLogin";
 
 function AppRouter() {
     return (
         <Router>
             <Routes>
                 <Route path="/dashboard" element={<Dashboard />}>
-                    <Route index element={<CommingSoon />} />
-
+                    <Route index element={<Overview />} />
+                    <Route path="account" element={<AccountCard />} />
+                    <Route path="post" element={<PostsManager />} />
+                    <Route path="info" element={<Info />} />
                 </Route>
+                
                 {/* Auth page */}
                 <Route path="/auth" element={<AuthLayout />}>
                     <Route index element={<Login />} />
                     <Route path="register" element={<Register />} />
                     <Route path="forgot" element={<Forgot />} />
-
+                    <Route path="admin" element={<AdminLogin />} />
                 </Route>
                 {/* Profile page */}
                 <Route

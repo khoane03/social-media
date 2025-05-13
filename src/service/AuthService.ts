@@ -21,19 +21,19 @@ const sendOtp = (email: string) => {
 }
 
 const logout = (token: string) => {
-    return AxiosService.post('/auth/logout', {refreshToken: token});
+    return AxiosService.post('/auth/logout', { refreshToken: token });
 }
 
 const forgotPassword = (data: object) => {
-    return AxiosService.post('/auth/recovery-password', { data });
+    return AxiosService.post('/auth/recovery-password', data);
 }
 
-export {
+export default {
     login,
     refreshToken,
     register,
     verifyOtp,
     sendOtp,
-    logout, 
+    logout,
     forgotPassword
 };

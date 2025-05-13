@@ -15,7 +15,7 @@ const Alert: React.FC<AlertProps> = ({ message, type = "error", onClose }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       onClose && onClose();
-    }, 5000);
+    }, 3000);
     return () => clearTimeout(timer);
   }
     , [onClose]);

@@ -1,6 +1,6 @@
 import { Logout, MailOutline } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
-import { logout } from "../../service/AuthService";
+import AuthService from "../../service/AuthService";
 import { getRefreshToken, removeAccessToken, removeRefreshToken } from "../../service/localStoreService";
 import Alert from "../alert/Alert";
 import { useState } from "react";
@@ -25,7 +25,7 @@ const Menu = ({ open, info }: { open: boolean; info?: { id?: string | null; avat
                 return;
             }
         
-            await logout(token);
+            await AuthService.logout(token);
             setMessage("Đăng xuất thành công");
             setTimeout(() => {
                 removeAccessToken();

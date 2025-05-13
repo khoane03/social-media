@@ -8,6 +8,10 @@ const getAllPosts = async () => {
     return await axiosInstance.get('/posts');
 }
 
+const getFriendPosts = async () => {
+    return await axiosInstance.get('/posts/friend-posts');
+}
+
 const getPostById = async (id: String) => {
     return await axiosInstance.get(`/posts/${id}`);
 }
@@ -25,5 +29,6 @@ export default {
     getAllPosts,
     deletePostById,
     getPostById,
-    getPostByUserId
+    getPostByUserId,
+    getFriendPosts,
 };

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Close } from "@mui/icons-material";
 import FileUpload from "./FileUpload";
-import PostService from "../../../service/PostService";
+import PostService from "../../service/PostService";
 
 type AddPostProps = {
     isOpen: boolean;

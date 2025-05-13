@@ -1,107 +1,168 @@
-import { useEffect, useState } from "react";
-import FriendService from "../../../service/FriendService"; // Đường dẫn đúng
+import { useEffect, useRef, useState } from "react";
 import { CheckCircle } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import Alert from "../alert/Alert";
 import Accept from "../popup/Accept";
-import NotificationService from "../../service/NotificationService";
+import FriendService from "../../service/FriendService";
+import UserService from "../../service/UserService";
+
+interface Friend {
+    friendId: string;
+    avatarUrl?: string;
+    name: string;
+    verified?: boolean;
+}
 
 const Friend = () => {
-    const [friendReq, setFriendReq] = useState<any[]>([]);
-    const [friendSug, setFriendSug] = useState<any[]>([]);
-    const [friendBlock, setFriendBlock] = useState<any[]>([]);
+    const [friendReq, setFriendReq] = useState<Friend[]>([]);
+    const [friendSug, setFriendSug] = useState<Friend[]>([]);
+    const [friendBlock, setFriendBlock] = useState<Friend[]>([]);
     const [success, setSuccess] = useState('');
     const [error, setError] = useState('');
     const [showPopup, setShowPopup] = useState(false);
     const [friendId, setFriendId] = useState('');
+    const [status, setStatus] = useState<Map<string, string>>(new Map());
+
+    const currentUser = useRef<string | null>(null);
+
+    const getCurrentUser = async () => {
+        try {
+            const res = await UserService.getInfo();
+            currentUser.current = res.data.id;
+        } catch (err) {
+            setError("Lỗi khi lấy thông tin người dùng");
+        }
+    };
+    
     const getAllFriendSuggestion = async () => {
         try {
-            const response = await FriendService.getFriendSuggestion();
-            setFriendSug(response.data);
-        } catch (error) {
+            const { data } = await FriendService.getFriendSuggestion(currentUser.current || '');
+            setFriendSug(data);
+    
+            const statusUpdates = await Promise.all(
+                data.map(async (friend: Friend) => {
+                    const formData = new FormData();
+                    formData.append("friendId", friend.friendId);
+                    const res = await FriendService.checkFriend(formData);
+    
+                    if (res.data) {
+                        return [friend.friendId, res.data.friendId === currentUser.current ? "PENDING" : "REQUESTED"] as const;
+                    }
+                    return null;
+                })
+            );
+    
+            const newStatus = new Map<string, string>();
+            statusUpdates.forEach(entry => {
+                if (entry) newStatus.set(entry[0], entry[1]);
+            });
+    
+            setStatus(newStatus);
+        } catch (err) {
             setError("Lỗi khi lấy danh sách bạn bè gợi ý");
         }
     };
-
+    
     const getAllFriendBlock = async () => {
         try {
-            const response = await FriendService.getAllFriendBlock();
-            setFriendBlock(response.data);
-            console.log(response.data);
-        } catch (error) {
+            const { data } = await FriendService.getAllFriendBlock(currentUser.current || '');
+            setFriendBlock(data);
+        } catch (err) {
             setError("Lỗi khi lấy danh sách bạn bè bị chặn");
         }
     };
-
+    
     const getFriendRequest = async () => {
         try {
-            const response = await FriendService.getFriendRequest();
-            setFriendReq(response.data);
-        } catch (error) {
+            const { data } = await FriendService.getFriendRequest(currentUser.current || '');
+            setFriendReq(data);
+        } catch (err) {
             setError("Lỗi khi lấy danh sách lời mời kết bạn");
         }
     };
-
-    const acceptFriend = async (friendId: string) => {
+    
+    const handleFriendAction = async (
+        serviceFn: (formData: FormData) => Promise<any>,
+        successMsg: string,
+        friendId: string,
+        listUpdater?: (friendId: string) => void,
+        statusUpdater?: (friendId: string, action: "add" | "cancel" | "accept") => void
+    ) => {
         try {
             const formData = new FormData();
             formData.append("friendId", friendId);
-            await FriendService.acceptFriend(formData);
-            setFriendReq(prev => prev.filter(friend => friend.friendId !== friendId));
-            setFriendSug(prev => prev.filter(friend => friend.friendId !== friendId));
-            setSuccess("Chấp nhận lời mời kết bạn thành công");
-        } catch (error) {
-            setError("Chấp nhận lời mời kết bạn thất bại");
+            await serviceFn(formData);
+    
+            if (listUpdater) listUpdater(friendId);
+            if (statusUpdater) statusUpdater(friendId, serviceFn === FriendService.acceptFriend ? "accept" : (serviceFn === FriendService.unFriend ? "cancel" : "add"));
+    
+            setSuccess(successMsg);
+        } catch (err) {
+            setError(`Thao tác thất bại`);
         }
     };
-
+    
+    // Update status ngay lập tức khi bấm nút
+    const updateStatus = (friendId: string, action: "add" | "cancel" | "accept") => {
+        setStatus(prev => {
+            const newStatus = new Map(prev);
+            if (action === "add") {
+                newStatus.set(friendId, "PENDING");
+            } else if (action === "cancel" || action === "accept") {
+                newStatus.delete(friendId);
+            }
+            return newStatus;
+        });
+    };
+    
+    const acceptFriend = (id: string) => 
+        handleFriendAction(FriendService.acceptFriend, "Chấp nhận lời mời kết bạn thành công", id, (id) => {
+            setFriendReq(prev => prev.filter(f => f.friendId !== id));
+            setFriendSug(prev => prev.filter(f => f.friendId !== id));
+        }, updateStatus);
+    
+    const cancelFriendRequest = (id: string) => 
+        handleFriendAction(FriendService.unFriend, "Hủy lời mời kết bạn thành công", id, (id) => {
+            setFriendReq(prev => prev.filter(f => f.friendId !== id));
+        }, updateStatus);
+    
     const addFriend = async (receiverId: string) => {
         try {
             const formData = new FormData();
             formData.append("receiverId", receiverId);
             await FriendService.addFriend(formData);
             setSuccess("Gửi lời mời kết bạn thành công");
-            await NotificationService.sendNotification({
-                userId: receiverId,
-                content: "Bạn đã nhận được lời mời kết bạn mới. path: /friends",
-            });
-            setFriendSug(prev => prev.filter(friend => friend.friendId !== receiverId));
-        } catch (error) {
+    
+            setFriendSug(prev => prev); // Không cần xoá người khỏi danh sách (nếu muốn ẩn thì .filter)
+    
+            updateStatus(receiverId, "add");
+        } catch (err) {
             setError("Gửi lời mời kết bạn thất bại");
         }
     };
-
-    const unBlockFriend = async (friendId: string) => {
-        try {
-            const formData = new FormData();
-            formData.append("friendId", friendId);
-            await FriendService.blockFriend(formData);
-            setFriendBlock(prev => prev.filter(friend => friend.friendId !== friendId));
-            setSuccess("Bỏ chặn bạn bè thành công");
+    
+    const unBlockFriend = (id: string) => 
+        handleFriendAction(FriendService.blockFriend, "Bỏ chặn bạn bè thành công", id, (id) => {
+            setFriendBlock(prev => prev.filter(f => f.friendId !== id));
             setShowPopup(false);
-        } catch (error) {
-            console.error("Error blocking friend:", error);
+        });
+    
+    const fetchData = async () => {
+        await getCurrentUser();
+        if (currentUser.current) {
+            await Promise.all([
+                getFriendRequest(),
+                getAllFriendSuggestion(),
+                getAllFriendBlock()
+            ]);
         }
     };
-
-    const cancelFriendRequest = async (friendId: string) => {
-        try {
-            const formData = new FormData();
-            formData.append("friendId", friendId);
-            await FriendService.unFriend(formData);
-            setFriendReq(prev => prev.filter(friend => friend.friendId !== friendId));
-            setSuccess("Hủy lời mời kết bạn thành công");
-        } catch (error) {
-            setError("Hủy lời mời kết bạn thất bại");
-        }
-    };
-
+    
     useEffect(() => {
         document.title = "Bạn bè";
-        getFriendRequest();
-        getAllFriendSuggestion();
-        getAllFriendBlock();
+        fetchData();
     }, []);
+    
 
     return (
         <>
@@ -156,6 +217,7 @@ const Friend = () => {
                     </div>
                 )}
 
+                {/* Gợi ý bạn bè */}
                 <div className="mb-8">
                     <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2 border-gray-300">Có thể bạn quen</h2>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -166,10 +228,31 @@ const Friend = () => {
                                     <Link to={`/profile/${friend.friendId}`} className="block font-semibold text-gray-800 hover:underline">
                                         {friend.name}
                                     </Link>
-                                    <button onClick={() => addFriend(friend.friendId)} className="mt-2 bg-blue-600 text-white px-3 py-1 rounded-md text-sm">Thêm bạn bè</button>
+                                    {status.get(friend.friendId) === 'REQUESTED' ? (
+                                        <button
+                                            onClick={() => acceptFriend(friend.friendId)}
+                                            className="mt-2 bg-green-600 text-white px-3 py-1 rounded-md text-sm hover:bg-green-700 transition-all"
+                                        >
+                                            Chấp nhận
+                                        </button>
+                                    ) : status.get(friend.friendId) === 'PENDING' ? (
+                                        <button
+                                            onClick={() => cancelFriendRequest(friend.friendId)}
+                                            className="mt-2 bg-red-600 text-white px-3 py-1 rounded-md text-sm hover:bg-red-700 transition-all"
+                                        >
+                                            Huỷ yêu cầu
+                                        </button>) : ((
+                                            <button
+                                                onClick={() => addFriend(friend.friendId)}
+                                                className="mt-2 bg-blue-600 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-700 transition-all"
+                                            >
+                                                Thêm bạn bè
+                                            </button>)
+                                    )}
                                 </div>
                             </div>
                         ))}
+
                     </div>
                 </div>
                 {/* Danh sách bạn bè bị chặn */}

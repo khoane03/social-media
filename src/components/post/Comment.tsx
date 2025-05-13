@@ -1,6 +1,6 @@
 import { Comment, MoreHoriz, Send } from "@mui/icons-material";
 import React, { useState } from "react";
-import CommentService from "../../../service/CommentService";
+import CommentService from "../../service/CommentService";
 
 interface CommentsProps {
     postId: string;
