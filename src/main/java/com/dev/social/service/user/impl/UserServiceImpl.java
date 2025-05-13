@@ -13,7 +13,6 @@ import com.dev.social.utils.validation.EnumValidate;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,11 +25,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-@Slf4j
 public class UserServiceImpl implements UserService {
 
     UserRepository userRepository;
@@ -107,6 +106,13 @@ public class UserServiceImpl implements UserService {
     public void deleteUserById(String id) {
         var user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorMessage.USER_NOT_FOUND));
         userRepository.delete(user);
+    }
+
+    @Override
+    public List<UserResponseDTO> searchUser(String keyword) {
+        return userRepository.searchUser(keyword).stream()
+                .map(UserResponseDTO::new)
+                .toList();
     }
 
     void updateAvatar(User user, String imageUrl) {

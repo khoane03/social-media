@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -66,5 +67,10 @@ public class UserController {
     public ApiResponseDTO<String> deleteUser(@PathVariable(name = "id") String id){
         userService.deleteUserById(id);
         return ApiResponseDTO.of(AppConst.SUCCESS);
+    }
+
+    @GetMapping("/search")
+    public ApiResponseDTO<List<UserResponseDTO>> searchUser(@RequestParam String keyword){
+        return ApiResponseDTO.of(userService.searchUser(keyword));
     }
 }

@@ -28,4 +28,10 @@ public interface UserRepository extends JpaRepository<User, String> {
     boolean existsByPhone(String phone);
 
     Optional<User> findByEmail(String email);
+
+    @Query("SELECT u FROM User u " +
+            "WHERE LOWER(u.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(u.email) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(u.phone) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    List<User> searchUser(@Param("keyword") String keyword);
 }
