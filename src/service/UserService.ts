@@ -40,6 +40,10 @@ const deleteUser = async (id: string) => {
     return await AxiosService.delete(`/user/${id}`);
 }
 
+const searchUser = async (keyword: string) => {
+    return await AxiosService.get('/user/search?keyword=' + keyword);
+}
+
 
 export default {
     getAllUsers,
@@ -51,6 +55,7 @@ export default {
     getUserOnline,
     changeStatus,
     verifyUser,
-    deleteUser
+    deleteUser,
+    searchUser
 };
 

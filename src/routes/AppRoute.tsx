@@ -21,6 +21,7 @@ import AccountCard from "../components/admin/manager/AccountCard";
 import Info from "../components/admin/manager/Info";
 import PostsManager from "../components/admin/manager/PostsManager";
 import AdminLogin from "../components/admin/login/AdminLogin";
+import SearchResult from "../pages/search/SearchResult";
 
 function AppRouter() {
     return (
@@ -62,6 +63,7 @@ function AppRouter() {
                     <Route index element={<MainLayout />} />
                     <Route path="friends" element={<Friend />} />
                     <Route path="/post/:postId" element/>
+                    <Route path="/search" element={<SearchResult />} />
                 </Route>
                 
 
