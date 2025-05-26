@@ -10,6 +10,7 @@ import com.dev.social.utils.enums.ImageEnum;
 import com.dev.social.utils.exception.AppException;
 import com.dev.social.utils.exception.ErrorMessage;
 import com.dev.social.utils.validation.EnumValidate;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -77,6 +78,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void updateImage(MultipartFile file, String type) throws IOException {
         ImageEnum imageEnum = EnumValidate.isValidEnum(ImageEnum.class, type, ErrorMessage.INVALID_TYPE);
         User user = getCurrentUser();
@@ -87,6 +89,7 @@ public class UserServiceImpl implements UserService {
             case COVER -> updateCover(user, imageUrl);
             default -> throw new AppException(ErrorMessage.BAD_REQUEST);
         }
+        userRepository.save(user);
 
     }
 

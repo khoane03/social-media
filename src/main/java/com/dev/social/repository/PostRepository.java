@@ -20,8 +20,8 @@ public interface PostRepository extends JpaRepository<Post, String> {
             "       p.createdAt as createdAt," +
             "       img.imageUrl as imageUrl " +
             "FROM Post p " +
-            "JOIN p.images img " +
-            "JOIN p.user u ")
+            "LEFT JOIN p.images img " +
+            "LEFT JOIN p.user u ")
     List<PostResult> getAllPosts();
 
     @Query("""
@@ -35,8 +35,8 @@ public interface PostRepository extends JpaRepository<Post, String> {
                p.createdAt as createdAt,
                img.imageUrl as imageUrl
             FROM Post p
-               JOIN p.images img
-               JOIN p.user u
+               LEFT JOIN p.images img
+               LEFT JOIN p.user u
             WHERE p.user.id IN (
                     SELECT f.friend.id FROM Friend f
                     WHERE f.user.id = :currentUserId AND f.status = 'ACCEPTED'
@@ -59,8 +59,8 @@ public interface PostRepository extends JpaRepository<Post, String> {
             "       p.createdAt as createdAt," +
             "       img.imageUrl as imageUrl " +
             "FROM Post p " +
-            "JOIN p.images img " +
-            "JOIN p.user u " +
+            "LEFT JOIN p.images img " +
+            "LEFT JOIN p.user u " +
             "WHERE p.user.id = :userId " +
             "order by p.updatedAt desc ")
     List<PostResult> getPostsByUserId(@Param("userId") String userId);
@@ -74,8 +74,8 @@ public interface PostRepository extends JpaRepository<Post, String> {
             "       p.createdAt as createdAt," +
             "       img.imageUrl as imageUrl " +
             "FROM Post p " +
-            "JOIN p.images img " +
-            "JOIN p.user u " +
+            "LEFT JOIN p.images img " +
+            "LEFT JOIN p.user u " +
             "WHERE p.id = :postId " +
             "order by p.updatedAt desc ")
     List<PostResult> getPostById(@Param("postId") String postId);
