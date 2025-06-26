@@ -15,7 +15,8 @@ function Register() {
         phone: '',
     });
 
-    const [generalError, setGeneralError] = useState<string | null>(null);
+    const [message, setMessage] = useState<string | null>(null);
+    const [error, setError] = useState(false);
     const [loading, setLoading] = useState(false);
     const [isVerify, setIsVerify] = useState(false);
     const [email, setEmail] = useState('');
@@ -36,7 +37,7 @@ function Register() {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setData((prev) => ({ ...prev, [name]: value }));
-        setGeneralError(null);
+        setMessage(null);
     };
 
     // Gửi yêu cầu đăng ký
@@ -46,9 +47,11 @@ function Register() {
         try {
             await AuthService.register(data);
             removeEmail();
+            setMessage('Đăng ký thành công!');
             setTimeout(() => navigate('/auth'), 2000);
         } catch (error: any) {
-            setGeneralError(error.response?.data?.errMess || AppConstant.ERR_SERVER);
+            setError(true);
+            setMessage(error.response?.data?.errMess || AppConstant.ERR_SERVER);
         } finally {
             setLoading(false);
         }
@@ -191,8 +194,8 @@ function Register() {
 
     return (
         <div className="flex min-h-screen">
-            {generalError && (
-                <Alert message={generalError} type="error" onClose={() => setGeneralError(null)} />
+            {message && (
+                <Alert message={message} type={error ? "error": "success"} onClose={() => setMessage(null)} />
             )}
             <div className="md:w-[50%] w-full p-6 animate-move">
                 {isVerify ? renderRegisterForm() : renderEmailVerification()}

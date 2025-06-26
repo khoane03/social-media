@@ -24,6 +24,10 @@ const deletePostById = async (postId: string) => {
     return await axiosInstance.delete(`/posts/${postId}`);
 }
 
+const totalPosts = async () => {
+    return await axiosInstance.get('/posts/count');
+}
+
 export default {
     addPost,
     getAllPosts,
@@ -31,4 +35,5 @@ export default {
     getPostById,
     getPostByUserId,
     getFriendPosts,
+    totalPosts
 };

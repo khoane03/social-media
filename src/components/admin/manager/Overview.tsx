@@ -37,7 +37,8 @@ function Overview() {
                 setMessage("Đăng xuất thành công");
             }, 2000);
         } catch (error: any) {
-            console.error("Error during logout:", error.response?.data?.message || error.message);
+            setError(true);
+            setMessage(error.response?.data?.message || "Lỗi khi đăng xuất. Vui lòng thử lại sau.");
         }
     };
 
@@ -47,17 +48,20 @@ function Overview() {
             setUserLogin(res.data);
 
         } catch (error: any) {
-            console.error("Error fetching user login:", error.response?.data?.message || error.message);
+            setError(true);
+            setMessage(error.response?.data?.message || "Lỗi khi lấy thông tin người dùng. Vui lòng thử lại sau.");
         }
     }
 
     const fetchAccounts = async () => {
         try {
-            const response = await UserService.getAllUsers("1", "1000"); // Tăng limit nếu muốn lấy đủ
 
-            const users = response.data || [];
-            const totalUsers = response?.totalElements || 0;
-            const blockedUsers = users.filter((user: any) => user.status === "Locked").length;
+            const [activeRes, lockedRes] = await Promise.all([
+                UserService.countUserByStatus("Active"),
+                UserService.countUserByStatus("Locked")
+            ]);
+            const totalUsers = activeRes.data || 0;
+            const blockedUsers = lockedRes.data || 0;
 
             setStats(prev => ({
                 ...prev,
@@ -65,21 +69,24 @@ function Overview() {
                 blockedUsers,
             }));
         } catch (error) {
-            console.error("Error fetching user stats:", error);
+            setError(true);
+            setMessage("Lỗi khi lấy danh sách người dùng. Vui lòng thử lại sau.");
         }
     };
 
     const fetchPosts = async () => {
         try {
-            const response = await PostService.getAllPosts();
-            const totalPosts = response?.totalElements || 0;
+            const res = await PostService.totalPosts();
+
+            const totalPosts = res?.data || 0;
 
             setStats(prev => ({
                 ...prev,
                 totalPosts,
             }));
         } catch (error) {
-            console.error("Error fetching posts:", error);
+            setError(true);
+            setMessage("Lỗi khi lấy danh sách bài viết. Vui lòng thử lại sau.");
         }
     };
 

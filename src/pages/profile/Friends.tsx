@@ -1,4 +1,4 @@
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import FriendService from "../../service/FriendService";
 import { Link, useParams } from "react-router-dom";
 import { Block, CheckCircle, MoreHoriz, PersonRemove } from "@mui/icons-material";
@@ -10,7 +10,7 @@ const friends = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
-    const {userId} = useParams();
+    const { userId } = useParams();
 
     const handleClicked = (friendId: string) => {
         setClickedFriendId(clickedFriendId === friendId ? null : friendId);

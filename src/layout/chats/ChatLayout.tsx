@@ -2,15 +2,9 @@ import { useParams } from "react-router-dom";
 import Header from "../../components/header/Header";
 import ChatBox from "../../pages/chat/ChatBox";
 import MenuChat from "../../pages/chat/Menu";
-import { useState } from "react";
 
 function ChatLayout() {
     const { userId } = useParams();
-    const [lastMessage, setLastMessage] = useState<string | null>(null);
-
-    const handleMessageChange = (message: string) => {
-        setLastMessage(message);
-    };
 
     return (
         <div className="bg-[rgb(242,244,247)] text-black min-h-screen w-screen flex flex-col">
@@ -23,7 +17,7 @@ function ChatLayout() {
                         ${userId ? 'hidden md:flex' : 'flex '}
                         flex-[3]
                     `} >
-                    <MenuChat lastMessage={lastMessage}/>
+                    <MenuChat />
                 </div>
 
                 {/* Main Chat Area */}
@@ -33,7 +27,7 @@ function ChatLayout() {
                         flex-[6]
                     `} >
                     {userId ? (
-                        <ChatBox userId={userId} lastMessage={handleMessageChange} />
+                        <ChatBox userId={userId} />
                     ) : (
                         <div className="flex flex-col items-center justify-center w-full h-full">
                             <h1 className="text-2xl font-bold text-gray-700">

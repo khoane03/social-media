@@ -28,11 +28,10 @@ interface User {
 }
 
 interface ChatBoxProps {
-  lastMessage: (message: string) => void;
   userId: string;
 }
 
-const ChatBox = ({ userId, lastMessage }: ChatBoxProps) => {
+const ChatBox = ({ userId }: ChatBoxProps) => {
   const [messages, setMessages] = useState<MessageResponse[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -103,7 +102,6 @@ const ChatBox = ({ userId, lastMessage }: ChatBoxProps) => {
       if ((data.sender === recipient.username && data.recipient === currentUser.username) ||
         data.sender === currentUser.username && data.recipient === recipient.username) {
         setMessages((prev) => [...prev, data]);
-        lastMessage(data.content);
       }
     });
 

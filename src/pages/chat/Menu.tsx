@@ -16,7 +16,7 @@ interface Chat {
   avatarUrl: string;
 }
 
-function MenuChat({lastMessage}: { lastMessage: string | null }) {
+function MenuChat() {
   const [listChat, setListChat] = useState<Chat[]>([]);
   const [userOnline, setUserOnline] = useState<string[]>([]);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);

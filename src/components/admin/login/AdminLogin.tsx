@@ -17,7 +17,6 @@ export default function Login() {
     const [username, setUsername] = useState<string>("");
     const [error, setError] = useState<string>("");
     const [showPassword, setShowPassword] = useState<boolean>(false);
-    const [roles, setRoles] = useState<string[]>([]);
     const navigate = useNavigate();
 
     useEffect(() => {

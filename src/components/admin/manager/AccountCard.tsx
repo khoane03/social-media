@@ -21,6 +21,11 @@ interface Account {
     verifier: boolean;
 }
 
+interface PageResponse {
+    data: Account[];
+    totalPages: number;
+}
+
 const AccountTable: FC = () => {
     const [accounts, setAccounts] = useState<Account[]>([]);
     const [message, setMessage] = useState<string>("");
@@ -32,9 +37,9 @@ const AccountTable: FC = () => {
 
     const fetchAccounts = async (pageNum = 1) => {
         try {
-            const response = await UserService.getAllUsers(String(pageNum), String(pageSize));
+            const response = await UserService.getAllUsers(String(pageNum), String(pageSize)) as unknown as PageResponse;
             setAccounts(response.data);
-            setPage({ currentPage: pageNum, totalPages: response.totalPages });
+            setPage({ currentPage: pageNum, totalPages: response?.totalPages });
         } catch (err) {
             setError(true);
             setMessage("Lỗi khi tải danh sách tài khoản");

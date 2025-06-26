@@ -29,19 +29,23 @@ const getUserOnline = async () => {
 }
 
 const changeStatus = async (id: string) => {
- return await AxiosService.put(`/user/status/${id}`);
+    return await AxiosService.put(`/user/status/${id}`);
 }
 
 const verifyUser = async (id: string) => {
     return await AxiosService.put(`/user/verification/${id}`);
 }
 
-const deleteUser = async (id: string) => {  
+const deleteUser = async (id: string) => {
     return await AxiosService.delete(`/user/${id}`);
 }
 
 const searchUser = async (keyword: string) => {
     return await AxiosService.get('/user/search?keyword=' + keyword);
+}
+
+const countUserByStatus = async (status: string) => {
+    return await AxiosService.get(`/user/count?status=${status}`);
 }
 
 
@@ -56,6 +60,7 @@ export default {
     changeStatus,
     verifyUser,
     deleteUser,
-    searchUser
+    searchUser,
+    countUserByStatus
 };
 

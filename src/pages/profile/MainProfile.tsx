@@ -101,7 +101,7 @@ export default function MainProfile() {
                             <div className="font-bold text-xl border-b pb-4">Giới thiệu</div>
                             {info ? (
                                 <>
-                                    {editInfo.address && (
+                                    
                                         <div className="my-3 flex items-center">
                                             <FmdGoodOutlined />
                                             <input
@@ -112,9 +112,9 @@ export default function MainProfile() {
                                                 onChange={(e) => setEditInfo({ ...editInfo, address: e.target.value })}
                                             />
                                         </div>
-                                    )}
+                                    
 
-                                    {editInfo.dob && (
+                                    
                                         <div className="my-3 flex items-center">
                                             <DateRange />
                                             <input
@@ -125,9 +125,9 @@ export default function MainProfile() {
                                                 onChange={(e) => setEditInfo({ ...editInfo, dob: e.target.value })}
                                             />
                                         </div>
-                                    )}
+                                    
 
-                                    {editInfo.gender && (
+                                    
                                         <div className="my-3 flex items-center">
                                             <Transgender />
                                             <select
@@ -143,21 +143,21 @@ export default function MainProfile() {
                                                 <option value="Khác">Khác</option>
                                             </select>
                                         </div>
-                                    )}
+                                    
 
-                                    {info?.age !== 0 && (
+                                    
                                         <div className="my-3 flex items-center">
                                             <Info />
                                             <span className="text-gray-500 text-sm pl-2">Tuổi: {info?.age}</span>
                                         </div>
-                                    )}
+                                    
 
-                                    {info?.phone && (
+                                    
                                         <div className="my-3 flex items-center">
                                             <Phone />
                                             <span className="text-gray-500 text-sm pl-2">{info.phone}</span>
                                         </div>
-                                    )}
+                                    
 
                                     {!onlyView && (
                                         <div className="border-t pt-3">

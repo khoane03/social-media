@@ -10,7 +10,6 @@ import NotFound from "../pages/error/NotFound";
 import AccessDenied from "../pages/error/AccessDenied";
 import Profile from "../pages/profile/Profile";
 import MainProfile from "../pages/profile/MainProfile";
-import CommingSoon from "../components/common/CommingSoon";
 import Forgot from "../pages/auth/Forgot";
 import Photo from "../pages/profile/Photo";
 import Friends from "../pages/profile/Friends";
