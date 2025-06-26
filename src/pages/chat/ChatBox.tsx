@@ -131,17 +131,21 @@ const ChatBox = ({ userId }: ChatBoxProps) => {
   };
 
   return (
-    <div className="md:flex flex-col h-[calc(100vh - 30px)] w-full border border-gray-200 md:rounded-2xl md:shadow-xl overflow-hidden bg-white my-2">
+    <div
+      className={`bg-white flex flex-col w-full h-full md:h-[calc(100vh-30px)] 
+              fixed inset-0 z-30 md:static md:rounded-2xl md:shadow-xl 
+              border border-gray-200 overflow-hidden my-0 md:my-2`}
+    >
       {/* Header */}
       <div className="bg-gradient-to-r from-purple-500 to-purple-700 text-white px-4 py-3 flex items-center md:gap-4 shadow-md">
-        {/* Back button với hiệu ứng hover */}
-        <div onClick={() => navigate('/chat')}
+        <div
+          onClick={() => navigate("/chat")}
           className="w-10 h-10 md:hidden flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 cursor-pointer transition-all"
-          title="Quay lại" >
+          title="Quay lại"
+        >
           <ArrowBack className="text-white" />
         </div>
 
-        {/* Avatar + Tên người nhận */}
         <img
           src={recipient?.avatarUrl || "default.png"}
           alt="Avatar"
@@ -156,8 +160,7 @@ const ChatBox = ({ userId }: ChatBoxProps) => {
         </Link>
       </div>
 
-
-      {/* Messages */}
+      {/* Tin nhắn */}
       <div className="flex-1 p-4 overflow-y-auto bg-gray-100 space-y-3">
         {error && <div className="text-center text-red-500">{error}</div>}
         {isLoading ? (
@@ -172,7 +175,7 @@ const ChatBox = ({ userId }: ChatBoxProps) => {
                 <div className="relative group max-w-[75%]">
                   <div
                     className={`px-4 py-2 rounded-2xl break-words shadow-md transition-all duration-200 
-      ${isOwn ? "bg-blue-500 text-white" : "bg-white text-gray-800 border border-gray-200"}`}
+                ${isOwn ? "bg-blue-500 text-white" : "bg-white text-gray-800 border border-gray-200"}`}
                   >
                     <p className="whitespace-pre-wrap">{msg.content}</p>
                     <span className={`text-xs ${isOwn ? "text-blue-100" : "text-gray-500"} block mt-1 text-right`}>
@@ -183,22 +186,22 @@ const ChatBox = ({ userId }: ChatBoxProps) => {
                     </span>
                   </div>
 
-                  {/* Icon MoreHoriz */}
                   <div
-                    className={`absolute top-1/2 -translate-y-1/2 ${isOwn ? "-left-6" : "-right-6"
-                      } opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer`}
-                    onClick={() => setSelectedMsgId(msg.id)} // <-- track message được chọn
+                    className={`absolute top-1/2 -translate-y-1/2 ${isOwn ? "-left-6" : "-right-6"} opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer`}
+                    onClick={() => setSelectedMsgId(msg.id)}
                   >
                     <MoreHorizOutlined className="text-gray-400 hover:text-gray-600" fontSize="small" />
                   </div>
 
-                  {/* Popup xác nhận xóa */}
                   {selectedMsgId === msg.id && (
-                    <Accept action="xoá tin nhắn" isAccept={() => handleDelete(msg.id)} isReject={() => setSelectedMsgId(null)} />
+                    <Accept
+                      action="xoá tin nhắn"
+                      isAccept={() => handleDelete(msg.id)}
+                      isReject={() => setSelectedMsgId(null)}
+                    />
                   )}
                 </div>
               </div>
-
             );
           })
         )}
@@ -217,11 +220,13 @@ const ChatBox = ({ userId }: ChatBoxProps) => {
         <button
           onClick={sendMessage}
           className="bg-blue-500 hover:bg-blue-600 text-white p-2.5 rounded-full flex items-center justify-center transition-all duration-200 disabled:opacity-50"
-          disabled={!input.trim()} >
+          disabled={!input.trim()}
+        >
           <Send className="text-lg" />
         </button>
       </div>
     </div>
+
   );
 };
 
