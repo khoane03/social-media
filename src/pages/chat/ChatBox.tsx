@@ -131,7 +131,7 @@ const ChatBox = ({ userId }: ChatBoxProps) => {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh - 30px)] w-full border border-gray-200 rounded-2xl shadow-xl overflow-hidden bg-white my-2">
+    <div className="md:flex fixed flex-col h-[calc(100vh - 30px)] w-full border border-gray-200 md:rounded-2xl md:shadow-xl overflow-hidden bg-white my-2">
       {/* Header */}
       <div className="bg-gradient-to-r from-purple-500 to-purple-700 text-white px-4 py-3 flex items-center gap-4 shadow-md">
         {/* Back button với hiệu ứng hover */}

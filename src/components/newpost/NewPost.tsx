@@ -28,15 +28,15 @@ const NewPost = () => {
                     </span>
                 </div>
                 <div className="flex justify-between items-center px-2 my-2">
-                    <div className="inline-block items-center hover:bg-gray-200 px-2 py-3 rounded-lg cursor-pointer sm:text-base text-sm">
+                    <div className=" inline-block items-center hover:bg-gray-200 px-2 py-3 rounded-lg cursor-pointer sm:text-base text-sm">
                         <EmergencyRecording className="text-red-600" />
                         <span className="ml-2 text-gray-500 ">Video trực tiếp</span>
                     </div>
                     <div className="inline-block items-center hover:bg-gray-200 px-2 py-3 rounded-lg cursor-pointer">
                         <PhotoLibrary className="text-emerald-500" />
-                        <span className="ml-2 text-gray-500 sm:text-base text-sm">Ảnh/Video</span>
+                        <span onClick={() => setDisplayPost(true)} className="ml-2 text-gray-500 sm:text-base text-sm">Ảnh</span>
                     </div>
-                    <div className="hidden items-center hover:bg-gray-200 px-2 py-3 rounded-lg cursor-pointer sm:text-base text-sm xl:inline-block">
+                    <div className=" hidden items-center hover:bg-gray-200 px-2 py-3 rounded-lg cursor-pointer sm:text-base text-sm xl:inline-block">
                         <Mood className="text-orange-300" />
                         <span className="ml-2 text-gray-500 ">Cảm xúc/Hoạt động</span>
                     </div>

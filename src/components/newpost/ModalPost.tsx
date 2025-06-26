@@ -39,7 +39,7 @@ const ModalPost = ({ isOpen, setOpen }: AddPostProps) => {
         const formData = new FormData();
         formData.append("content", content);
         files.forEach((file) => {
-            console.log("size", (file.size)/1024);
+            console.log("size", (file.size) / 1024);
             formData.append("files", file);
         });
 
@@ -65,8 +65,8 @@ const ModalPost = ({ isOpen, setOpen }: AddPostProps) => {
     };
 
     return (
-        <div 
-            className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 h-screen w-screen" 
+        <div
+            className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 h-screen w-screen"
             onClick={() => {
                 setOpen(false);
                 setFiles([]);
@@ -75,9 +75,10 @@ const ModalPost = ({ isOpen, setOpen }: AddPostProps) => {
                 setMessage("");
             }} // Đóng khi click nền ngoài
         >
-            <div 
-                className="bg-white border border-gray-200 rounded-lg shadow-lg w-[90%] max-w-md max-h-[90vh] p-6 flex flex-col animate-move overflow-hidden"
-                onClick={(e) => e.stopPropagation()} // Chặn sự kiện đóng khi click vào modal
+            <div
+                className="bg-white border border-gray-200 rounded-lg shadow-lg w-[90%] max-w-md max-h-[90vh] p-6 flex flex-col overflow-hidden 
+               opacity-0 scale-95 translate-y-6 transition-all duration-500 ease-out animate-fade-in-up"
+                onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
                 <div className="flex justify-between items-center border-b pb-2">
@@ -109,9 +110,8 @@ const ModalPost = ({ isOpen, setOpen }: AddPostProps) => {
                 <button
                     onClick={handlePost}
                     disabled={loading}
-                    className={`mt-4 px-4 w-full py-2 rounded-lg font-bold text-white ${
-                        loading ? "bg-green-400" : "bg-purple-500 hover:bg-purple-600"
-                    }`}
+                    className={`mt-4 px-4 w-full py-2 rounded-lg font-bold text-white ${loading ? "bg-green-400" : "bg-purple-500 hover:bg-purple-600"
+                        }`}
                 >
                     {!loading ? "Đăng bài" : "Đang xử lý..."}
                 </button>
