@@ -146,10 +146,9 @@ const ChatBox = ({ userId }: ChatBoxProps) => {
 
   return (
     <div
-      className={`bg-white flex flex-col w-full min-h-screen 
+      className={`bg-white flex flex-col w-full
     fixed md:static top-[64px] inset-0 z-30 md:rounded-2xl md:shadow-xl 
     border border-gray-200 overflow-hidden my-0 md:my-2`}
-      style={{ height: "100dvh" }} // <- dùng đơn vị động tránh bàn phím che
     >
       {/* Header */}
       <div className="bg-gradient-to-r from-purple-500 to-purple-700 text-white px-4 py-3 flex items-center gap-4 shadow-md">

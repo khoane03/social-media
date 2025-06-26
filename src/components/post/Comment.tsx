@@ -32,9 +32,9 @@ export const Comments: React.FC<CommentsProps> = ({ postId }) => {
 
     const createComment = async () => {
         const data = {
-            postId ,
-            content: contents 
-        }   
+            postId,
+            content: contents
+        }
         await CommentService.createComment(data);
         getComments();
         setContents("");
@@ -66,7 +66,8 @@ export const Comments: React.FC<CommentsProps> = ({ postId }) => {
                         <div className="border-b-2">
                             {comments.map((comment: Comment, index) => (
                                 <div key={index} className="my-4 bg-white shadow-lg p-2 rounded-lg flex items-center">
-                                    <img className="w-10 h-10 rounded-full border border-gray-400"
+                                    <img
+                                        className="w-10 h-10 rounded-full object-cover border border-gray-400"
                                         src={comment.avatarUrl}
                                     />
                                     <div className="ml-2 w-full">
@@ -75,7 +76,7 @@ export const Comments: React.FC<CommentsProps> = ({ postId }) => {
                                     </div>
                                     <MoreHoriz className="text-gray-400 hover:text-gray-600 cursor-pointer mr-2" />
                                 </div>
-                            )) }
+                            ))}
                         </div>
 
                         <div className="border border-gray-400 rounded-lg bg-gray-300 flex items-center justify-between px-2 mt-4">
@@ -87,13 +88,13 @@ export const Comments: React.FC<CommentsProps> = ({ postId }) => {
                                     if (e.key === "Enter") {
                                         createComment();
                                     }
-                                } }
+                                }}
                                 placeholder="Nhập bình luận của bạn." />
-                                
+
                             <button>
                                 <Send className="text-purple-500 hover:text-purple-600"
-                                onClick={createComment}
-                                
+                                    onClick={createComment}
+
                                 />
                             </button>
                         </div>
