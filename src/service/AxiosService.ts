@@ -81,6 +81,8 @@ axiosInstance.interceptors.response.use(
           'https://social-media-zi3l.onrender.com/api/v1/auth/refresh',
           { refreshToken }
         );
+        console.log('Refresh token response:', response.data);
+        
 
         const newAccessToken = response.data.data.accessToken;
         setAccessToken(newAccessToken);
@@ -91,9 +93,10 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError, null);
-        removeAccessToken();
-        removeRefreshToken();
-        window.location.href = '/auth';
+        console.error('Refresh token error:', refreshError);
+        // removeAccessToken();
+        // removeRefreshToken();
+        // window.location.href = '/auth';
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
