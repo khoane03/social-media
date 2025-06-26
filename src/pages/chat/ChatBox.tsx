@@ -132,12 +132,12 @@ const ChatBox = ({ userId }: ChatBoxProps) => {
 
   return (
     <div
-      className={`bg-white flex flex-col w-full h-full md:h-[calc(100vh-30px)] 
+      className={`bg-white flex flex-col w-full h-screen md:h-[calc(100vh-30px)] 
               fixed top-[60px] inset-0 z-30 md:static md:rounded-2xl md:shadow-xl 
               border border-gray-200 overflow-hidden my-0 md:my-2`}
     >
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-500 to-purple-700 text-white px-4 py-3 flex items-center md:gap-4 shadow-md">
+      <div className="bg-gradient-to-r from-purple-500 to-purple-700 text-white px-4 py-3 flex items-center gap-4 shadow-md">
         <div
           onClick={() => navigate("/chat")}
           className="w-10 h-10 md:hidden flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 cursor-pointer transition-all"
