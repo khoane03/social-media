@@ -21,4 +21,6 @@ public interface PostService {
     void deletePostById(String id);
 
     void updatePost(Post post);
+
+    Long countPosts();
 }

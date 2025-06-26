@@ -8,6 +8,7 @@ import com.dev.social.utils.constants.AppConst;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -72,5 +73,10 @@ public class UserController {
     @GetMapping("/search")
     public ApiResponseDTO<List<UserResponseDTO>> searchUser(@RequestParam String keyword){
         return ApiResponseDTO.of(userService.searchUser(keyword));
+    }
+
+    @GetMapping("/count")
+    public ApiResponseDTO<Integer> countUser(@RequestParam String status) {
+        return ApiResponseDTO.of(userService.countUserByStatus(status));
     }
 }

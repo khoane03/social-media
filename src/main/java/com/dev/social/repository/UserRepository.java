@@ -34,4 +34,6 @@ public interface UserRepository extends JpaRepository<User, String> {
             "OR LOWER(u.email) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "OR LOWER(u.phone) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     List<User> searchUser(@Param("keyword") String keyword);
+
+    int countByStatus(String status);
 }

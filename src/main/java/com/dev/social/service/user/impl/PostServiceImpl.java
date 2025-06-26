@@ -100,6 +100,11 @@ public class PostServiceImpl implements PostService {
 
     }
 
+    @Override
+    public Long countPosts() {
+        return postRepository.count();
+    }
+
     Post createPost(PostRequest request, User user) throws IOException {
         Post post = Post.builder()
                 .contents(request.getContent())

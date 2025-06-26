@@ -118,6 +118,11 @@ public class UserServiceImpl implements UserService {
                 .toList();
     }
 
+    @Override
+    public Integer countUserByStatus(String status) {
+        return userRepository.countByStatus(status);
+    }
+
     void updateAvatar(User user, String imageUrl) {
         if (!imageUrl.equals(user.getAvatarUrl())) {
             user.setAvatarUrl(imageUrl);

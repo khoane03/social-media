@@ -52,4 +52,9 @@ public class PostController {
         postService.deletePostById(id);
         return ApiResponseDTO.of(AppConst.SUCCESS);
     }
+
+    @GetMapping("/count")
+    public ApiResponseDTO<Long> countPosts() {
+        return ApiResponseDTO.of(postService.countPosts());
+    }
 }

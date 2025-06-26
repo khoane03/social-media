@@ -24,6 +24,7 @@ public enum ErrorMessage {
     INVALID_FEEL_TYPE(400_010, "Invalid feel type, Must be (LIKE, LOVE, HAHA, WOW, SAD, ANGRY)", HttpStatus.BAD_REQUEST),
     SAME_USER(400_011, "Can't send request to yourself", HttpStatus.BAD_REQUEST),
     INVALID_TYPE(400_012, "Invalid type", HttpStatus.BAD_REQUEST),
+    INVALID_STATUS(400_013, "Invalid status", HttpStatus.BAD_REQUEST),
 
     // code 401
     UNAUTHORIZED(401, "UNAUTHORIZED", HttpStatus.UNAUTHORIZED),

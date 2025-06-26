@@ -27,4 +27,6 @@ public interface UserService {
 
     List<UserResponseDTO> searchUser(String keyword);
 
+    Integer countUserByStatus(String status);
+
 }
