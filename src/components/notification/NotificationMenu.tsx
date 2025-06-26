@@ -1,9 +1,8 @@
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import NotificationService from "../../service/NotificationService";
 import UserService from "../../service/UserService";
 import { DeleteOutlined, Notifications } from "@mui/icons-material";
 import { useStomp } from "../../context/WsContext";
-import { Link } from "react-router-dom";
 
 interface Notification {
     id: string;
@@ -20,13 +19,33 @@ interface Props {
 const NotificationMenu = ({ onUpdateUnread, open = false, onClose }: Props) => {
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const { isConnected, subscribe } = useStomp();
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    // Hide menu when clicking outside
+    useEffect(() => {
+        if (!open) return;
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                onClose?.();
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [open, onClose]);
+
+    // Prevent body scroll when menu is open
+    useEffect(() => {
+        if (open) {
+            document.body.style.overflow = "hidden";
+            return () => { document.body.style.overflow = ""; };
+        }
+    }, [open]);
 
     const unreadCount = useMemo(
-        () => notifications.filter(n => n.status === "UNREAD").length,
+        () => notifications.reduce((acc, n) => acc + (n.status === "UNREAD" ? 1 : 0), 0),
         [notifications]
     );
 
-    // Gọi callback mỗi khi số lượng thông báo chưa đọc thay đổi
     useEffect(() => {
         onUpdateUnread(unreadCount);
     }, [unreadCount, onUpdateUnread]);
@@ -41,23 +60,17 @@ const NotificationMenu = ({ onUpdateUnread, open = false, onClose }: Props) => {
         }
     }, []);
 
-    useEffect(() => {
-        fetchNotifications();
-    }, [fetchNotifications]);
+    useEffect(() => { fetchNotifications(); }, [fetchNotifications]);
 
-    // Lắng nghe thông báo mới qua STOMP
+    // Listen for new notifications via STOMP
     useEffect(() => {
         if (!isConnected) return;
-
         const subscription = subscribe("/user/private/notification", (message: unknown) => {
             const newNoti = message as Notification;
-            if (["UNREAD", "READ"].includes(newNoti.status)) {
+            if (newNoti.status === "UNREAD" || newNoti.status === "READ") {
                 setNotifications(prev => [...prev, newNoti]);
-            } else {
-                console.error("Invalid notification status:", newNoti.status);
             }
         });
-
         return () => subscription?.unsubscribe();
     }, [isConnected, subscribe]);
 
@@ -83,25 +96,16 @@ const NotificationMenu = ({ onUpdateUnread, open = false, onClose }: Props) => {
         }
     }, []);
 
-    const extractPath = (content: string) => {
-        const match = content.match(/path:\s*(\/\S*)/);
-        return match ? match[1] : "/";
-    };
-
-    const extractMessage = (content: string) => {
-        return content.split(".")[0].trim();
-    };
-
     return (
         <div
-            className={`absolute right-2 left-2 top-full bg-white shadow-2xl border border-gray-200 rounded-xl p-4 z-50 transition-all duration-300 ease-in-out transform 
-        ${open ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"}`}
+            ref={dropdownRef}
+            className={`fixed md:w-96 md:inset-x-auto inset-x-0 md:right-4 top-20 bg-white shadow-2xl border border-gray-200 rounded-xl p-4 z-50 transition-all duration-300 ease-in-out transform 
+                ${open ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"} md:mx-auto mx-2`}
         >
             <h3 className="text-lg font-bold text-gray-800 mb-3 border-b border-gray-100 pb-2 flex items-center gap-2">
                 <Notifications className="w-5 h-5 text-purple-600" />
                 Thông báo
             </h3>
-
             {notifications.length === 0 ? (
                 <div className="text-center text-gray-500 text-sm">Không có thông báo nào</div>
             ) : (
@@ -110,24 +114,21 @@ const NotificationMenu = ({ onUpdateUnread, open = false, onClose }: Props) => {
                         <li
                             key={noti.id}
                             className={`p-3 rounded-lg flex justify-between items-start border hover:bg-purple-50 transition-colors duration-200 cursor-pointer 
-                        ${noti.status === "UNREAD" ? "bg-purple-100" : "bg-white"} animate-fade-in`}
+                                ${noti.status === "UNREAD" ? "bg-purple-100" : "bg-white"} animate-fade-in`}
                             style={{ animationDelay: `${index * 30}ms`, animationFillMode: "backwards" }}
                         >
-                            <Link
-                                to={extractPath(noti.content)}
+                            <div
                                 className="flex items-center gap-3 flex-1"
                                 onClick={e => {
                                     e.stopPropagation();
-                                    handleMarkAsRead(noti.id);
-                                    onClose?.();
+                                    if (noti.status === "UNREAD") handleMarkAsRead(noti.id);
                                 }}
                             >
                                 <span className="w-2 h-2 bg-purple-500 rounded-full shrink-0" />
                                 <span className={`text-sm ${noti.status === "UNREAD" ? "font-semibold text-gray-800" : "text-gray-600"}`}>
-                                    {extractMessage(noti.content)}
+                                    {noti.content}
                                 </span>
-                            </Link>
-
+                            </div>
                             <button
                                 onClick={e => {
                                     e.stopPropagation();

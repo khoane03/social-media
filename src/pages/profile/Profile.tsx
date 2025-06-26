@@ -204,7 +204,7 @@ export default function Profile() {
                         </NavLink>
                     </div>
                 </div>
-                <div className="bg-[#F2F4F7] text-black h-full pt-5 mb-1.5">
+                <div className="bg-[#F2F4F7] text-black h-full pt-5 pb-2">
                     <Outlet />
                 </div>
             </div>

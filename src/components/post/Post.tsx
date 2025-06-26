@@ -1,12 +1,13 @@
 import { CheckCircle, MoreHoriz } from "@mui/icons-material";
 import ImagePost from "./ImagePost";
 import { Link } from "react-router-dom";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { PostActions } from "./PostAction";
 import PostService from "../../service/PostService";
 import Accept from "../popup/Accept";
 import { useState } from "react"; 
 import Alert from "../alert/Alert";
+import UserService from "../../service/UserService";
 
 interface Post {
     postId: string;
@@ -55,6 +56,7 @@ const PostItem = React.memo(({ post, onDelete }: PostItemProps) => {
     const [openAccept, setOpenAccept] = useState(false);
     const [isError, setIsError] = useState(false);
     const [message, setMessage] = useState("");
+    const [isOwner, setIsOwner] = useState(false);
 
     const handleDeletePost = async () => {
         try {
@@ -77,6 +79,19 @@ const PostItem = React.memo(({ post, onDelete }: PostItemProps) => {
         setOpenAccept(false);
     };
 
+    useEffect(() => {
+        const checkOwnership = async () => {
+            try {
+                const user = await UserService.getInfo();
+                setIsOwner(user.data.id === post.userId);
+            } catch (error) {
+                console.error("Error checking ownership:", error);
+            }
+        };
+
+        checkOwnership();
+    },[]);
+
     return (
         <div className="bg-white w-full h-auto rounded-xl shadow-md py-3 mb-4 relative">
             {openAccept && (
@@ -95,9 +110,10 @@ const PostItem = React.memo(({ post, onDelete }: PostItemProps) => {
                 />
             )}
 
-            <button
-                className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+            <button className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
                 onClick={() => setOpenAccept(true)}
+                disabled={!isOwner} // Disable if not the owner
+                title={isOwner ? "Xoá bài viết" : "Bạn không có quyền xoá bài viết này"}
             >
                 <MoreHoriz className="w-6 h-6" />
             </button>
