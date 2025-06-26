@@ -23,7 +23,7 @@ export const useStomp = () => {
 };
 
 const RECONNECT_DELAY = 5000;
-const WEBSOCKET_URL = 'wss://social-media-zi3l.onrender.com//api/v1/ws';
+const WEBSOCKET_URL = 'wss://social-media-zi3l.onrender.com/api/v1/ws';
 
 export const StompProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const clientRef = useRef<Client | null>(null);
