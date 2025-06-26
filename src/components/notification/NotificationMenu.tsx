@@ -94,10 +94,10 @@ const NotificationMenu = ({ onUpdateUnread, open = false, onClose }: Props) => {
 
     return (
         <div
-            className={`absolute right-0 top-[110%] w-80 bg-white shadow-2xl border border-gray-200 rounded-xl p-4 z-50 transition-all duration-300 ease-in-out transform 
-                ${open ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"}`}
+            className={`absolute right-2 left-2 top-full bg-white shadow-2xl border border-gray-200 rounded-xl p-4 z-50 transition-all duration-300 ease-in-out transform 
+        ${open ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"}`}
         >
-            <h3 className="text-xl font-bold text-gray-800 mb-4 border-b border-gray-100 pb-2 flex items-center gap-2">
+            <h3 className="text-lg font-bold text-gray-800 mb-3 border-b border-gray-100 pb-2 flex items-center gap-2">
                 <Notifications className="w-5 h-5 text-purple-600" />
                 Thông báo
             </h3>
@@ -105,12 +105,12 @@ const NotificationMenu = ({ onUpdateUnread, open = false, onClose }: Props) => {
             {notifications.length === 0 ? (
                 <div className="text-center text-gray-500 text-sm">Không có thông báo nào</div>
             ) : (
-                <ul className="space-y-3 max-h-64 overflow-y-auto pr-1 custom-scrollbar">
+                <ul className="space-y-3 max-h-80 overflow-y-auto pr-1 custom-scrollbar">
                     {notifications.map((noti, index) => (
                         <li
                             key={noti.id}
                             className={`p-3 rounded-lg flex justify-between items-start border hover:bg-purple-50 transition-colors duration-200 cursor-pointer 
-                                ${noti.status === "UNREAD" ? "bg-purple-100" : "bg-white"} animate-fade-in`}
+                        ${noti.status === "UNREAD" ? "bg-purple-100" : "bg-white"} animate-fade-in`}
                             style={{ animationDelay: `${index * 30}ms`, animationFillMode: "backwards" }}
                         >
                             <Link
@@ -132,7 +132,6 @@ const NotificationMenu = ({ onUpdateUnread, open = false, onClose }: Props) => {
                                 onClick={e => {
                                     e.stopPropagation();
                                     handleDelete(noti.id);
-                                   
                                 }}
                                 className="text-gray-400 hover:text-red-600 transition-colors p-1"
                                 aria-label="Delete notification"
