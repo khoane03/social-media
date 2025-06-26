@@ -94,8 +94,8 @@ axiosInstance.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError, null);
         console.error('Refresh token error:', refreshError);
-        // removeAccessToken();
-        // removeRefreshToken();
+        removeAccessToken();
+        removeRefreshToken();
         // window.location.href = '/auth';
         return Promise.reject(refreshError);
       } finally {
