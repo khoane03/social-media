@@ -139,12 +139,12 @@ export default function Login() {
 
                     <div className="md:hidden mt-4 flex justify-between">
                         <Link
-                            to="/register"
+                            to="/auth/register"
                             className="mr-2 text-center text-[10px] w-full p-2 rounded-md bg-purple-500 text-white font-bold shadow-md hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-300">
                             Đăng ký tài khoản
                         </Link>
                         <Link
-                            to="/forgot"
+                            to="/auth/forgot"
                             className="text-[10px] text-center w-full p-2 rounded-md bg-purple-500 text-white font-bold shadow-md hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-300">
                             Quên mật khẩu
                         </Link>
