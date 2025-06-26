@@ -36,10 +36,10 @@ export default function Login() {
                 navigate("/dashboard");
             } else if (roles.includes("ROLE_USER")) {
                 setError("Tài khoản không có quyền truy cập vào trang quản trị.");
-                navigate("/no-permission");
+                // navigate("/no-permission");
             } else {
                 setError("Tài khoản không có quyền phù hợp.");
-                navigate("/no-permission");
+                // navigate("/no-permission");
             }
 
         } catch (err: any) {

@@ -78,7 +78,7 @@ axiosInstance.interceptors.response.use(
         }
 
         const response = await axios.post(
-          'http://localhost:8686/api/v1/auth/refresh',
+          'https://social-media-zi3l.onrender.com/api/v1/auth/refresh',
           { refreshToken }
         );
 
