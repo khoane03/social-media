@@ -146,8 +146,7 @@ const ChatBox = ({ userId }: ChatBoxProps) => {
 
   return (
     <div
-      className={`bg-white flex flex-col w-full
-    fixed md:static top-[64px] inset-0 z-30 md:rounded-2xl md:shadow-xl 
+      className={`bg-white flex flex-col w-full fixed md:static top-[64px] inset-0 z-30 md:rounded-2xl md:shadow-xl 
     border border-gray-200 overflow-hidden my-0 md:my-2`}
     >
       {/* Header */}
