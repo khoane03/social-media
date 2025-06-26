@@ -129,12 +129,27 @@ const ChatBox = ({ userId }: ChatBoxProps) => {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") sendMessage();
   };
+  useEffect(() => {
+  const input = document.querySelector("input");
+  if (!input) return;
+
+  const handleFocus = () => {
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 300); // đợi bàn phím mở xong
+  };
+
+  input.addEventListener("focus", handleFocus);
+  return () => input.removeEventListener("focus", handleFocus);
+}, []);
+
 
   return (
     <div
-      className={`bg-white flex flex-col w-full h-screen md:h-[calc(100vh-60px)] 
-              fixed min-h-screen md:static top-[64px] inset-0 z-30 md:rounded-2xl md:shadow-xl 
-              border border-gray-200 overflow-hidden my-0 md:my-2`}
+      className={`bg-white flex flex-col w-full min-h-screen md:h-[calc(100vh-60px)] 
+    fixed md:static top-[64px] inset-0 z-30 md:rounded-2xl md:shadow-xl 
+    border border-gray-200 overflow-hidden my-0 md:my-2`}
+      style={{ height: "100dvh" }} // <- dùng đơn vị động tránh bàn phím che
     >
       {/* Header */}
       <div className="bg-gradient-to-r from-purple-500 to-purple-700 text-white px-4 py-3 flex items-center gap-4 shadow-md">
