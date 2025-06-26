@@ -10,7 +10,7 @@ import {
 const noAuthUrls = ["/auth/"];
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8686/api/v1',
+  baseURL: 'https://social-media-zi3l.onrender.com/api/v1',
 });
 
 let isRefreshing = false;
