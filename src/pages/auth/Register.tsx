@@ -47,6 +47,7 @@ function Register() {
         try {
             await AuthService.register(data);
             removeEmail();
+            console.log('email:', getEmailLocal());
             setMessage('Đăng ký thành công!');
             setTimeout(() => navigate('/auth'), 2000);
         } catch (error: any) {
