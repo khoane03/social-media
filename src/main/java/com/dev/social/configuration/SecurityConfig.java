@@ -28,7 +28,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfig {
 
     @Value("${define.allowed_origins}")
-    String ALLOWED_ORIGINS;
+    String[] ALLOWED_ORIGINS;
 
     @Value("${define.white_list}")
     String[] WHITE_LIST;
