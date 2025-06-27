@@ -20,6 +20,7 @@ const NotificationMenu = ({ onUpdateUnread, open = false, onClose }: Props) => {
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const { isConnected, subscribe } = useStomp();
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const [loading, setLoading] = useState(false);
 
     // Hide menu when clicking outside
     useEffect(() => {
@@ -76,10 +77,14 @@ const NotificationMenu = ({ onUpdateUnread, open = false, onClose }: Props) => {
 
     const handleDelete = useCallback(async (id: string) => {
         try {
+            setLoading(true);
             await NotificationService.deleteNotification(id);
             setNotifications(prev => prev.filter(n => n.id !== id));
         } catch (error) {
             console.error("Error deleting notification:", error);
+        }
+        finally {
+            setLoading(false);
         }
     }, []);
 
@@ -132,6 +137,7 @@ const NotificationMenu = ({ onUpdateUnread, open = false, onClose }: Props) => {
                                     </span>
                                 </div>
                                 <button
+                                    disabled={loading}
                                     onClick={e => {
                                         e.stopPropagation();
                                         handleDelete(noti.id);
