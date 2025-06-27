@@ -41,8 +41,8 @@ logging:
     com.zaxxer.hikari: ERROR
 
 define:
-  allowed_origins: https://social-media-woad-seven.vercel.app
-  white_list: /auth/**,/ws/**
+  allowed_origins: ${ALOOWED_ORIGINS}
+  white_list: ${WHITE_LIST}
   admin:
     name: DEV
     username: admin
