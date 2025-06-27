@@ -45,6 +45,7 @@ public class AppConst {
     public static final String NEW_COMMENT = "Bạn có một bình luận mới.";
     public static final String NEW_REACTION = "Bạn có một lượt cảm xúc mới.";
     public static final String UPDATE_INFO = "Cập nhật thông tin thành công.";
+    public static final String NEW_ACCOUNT = "Tạo tài khoản thành công.";
 
     //column
     public static final String UPDATED_AT = "updatedAt";

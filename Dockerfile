@@ -19,4 +19,4 @@ FROM openjdk:17-jdk-slim
 COPY --from=builder /home/gradle/project/build/libs/*.jar app.jar
 
 # Run the app
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+ENTRYPOINT ["java","-Duser.timezone=Asia/Ho_Chi_Minh", "-jar", "/app.jar"]

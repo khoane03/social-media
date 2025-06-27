@@ -18,6 +18,7 @@ import com.dev.social.utils.enums.RolesEnum;
 import com.dev.social.utils.exception.AppException;
 import com.dev.social.utils.exception.ErrorMessage;
 import com.dev.social.utils.validation.RegisterValidate;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -78,6 +79,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
+    @Transactional
     public void registerUser(RegisterRequestDTO registerRequestDTO) {
         validate.isValidRegister(registerRequestDTO);
         Role role = rolesRepository.findByRoleName(RolesEnum.ROLE_USER.name())
@@ -96,7 +98,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         // send notification
         notificationService.createNotification(NotificationRequestDTO.builder()
                 .userId(userRegister.getId())
-                .content(AppConst.NEW_COMMENT)
+                .content(AppConst.NEW_ACCOUNT)
                 .build());
     }
 
