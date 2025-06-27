@@ -10,6 +10,7 @@ import com.dev.social.utils.constants.AppConst;
 import com.dev.social.utils.enums.NotificationEnum;
 import com.dev.social.utils.exception.AppException;
 import com.dev.social.utils.exception.ErrorMessage;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -28,6 +29,7 @@ public class NotificationServiceImpl implements NotificationService {
     final SimpMessagingTemplate simpMessagingTemplate;
 
     @Override
+    @Transactional
     public void createNotification(NotificationRequestDTO req) {
         var user = userRepository.findById(req.getUserId())
                 .orElseThrow(() -> new AppException(ErrorMessage.USER_NOT_FOUND));
@@ -36,7 +38,7 @@ public class NotificationServiceImpl implements NotificationService {
                 .contents(req.getContent())
                 .status(NotificationEnum.UNREAD)
                 .build();
-        notificationRepository.save(notification);
+        notificationRepository.saveAndFlush(notification);
         sendNotification(user.getUsername(), new NotificationResponseDTO(notification));
     }
 
