@@ -8,6 +8,7 @@ import Accept from "../popup/Accept";
 import { useState } from "react"; 
 import Alert from "../alert/Alert";
 import UserService from "../../service/UserService";
+import ViewPost from "./ShowPost";
 
 interface Post {
     postId: string;
@@ -57,6 +58,7 @@ const PostItem = React.memo(({ post, onDelete }: PostItemProps) => {
     const [isError, setIsError] = useState(false);
     const [message, setMessage] = useState("");
     const [isOwner, setIsOwner] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
 
     const handleDeletePost = async () => {
         try {
@@ -147,7 +149,7 @@ const PostItem = React.memo(({ post, onDelete }: PostItemProps) => {
             </div>
 
             {/* Nội dung bài viết */}
-            <Link to={`/post/${post.postId}`}>
+            <div onClick={() => setIsOpen(true)} className="cursor-pointer">
                 <div className="my-3 px-4">
                     <p className="text-gray-600">{post.postContent}</p>
                 </div>
@@ -157,9 +159,10 @@ const PostItem = React.memo(({ post, onDelete }: PostItemProps) => {
                         <ImagePost images={post.images} />
                     </div>
                 </div>
-            </Link>
+            </div>
 
             <PostActions postId={post.postId} />
+            <ViewPost isOpen={isOpen} postId={post.postId} onClose={() => setIsOpen(false)} />
         </div>
     );
 });

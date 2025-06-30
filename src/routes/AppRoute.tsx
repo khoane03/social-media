@@ -32,7 +32,7 @@ function AppRouter() {
                     <Route path="post" element={<PostsManager />} />
                     <Route path="info" element={<Info />} />
                 </Route>
-                
+
                 {/* Auth page */}
                 <Route path="/auth" element={<AuthLayout />}>
                     <Route index element={<Login />} />
@@ -61,10 +61,9 @@ function AppRouter() {
                 }>
                     <Route index element={<MainLayout />} />
                     <Route path="friends" element={<Friend />} />
-                    <Route path="/post/:postId" element/>
                     <Route path="/search" element={<SearchResult />} />
                 </Route>
-                
+
 
                 {/* CHAT */}
                 <Route path="/chat/:userId?" element={
@@ -73,7 +72,7 @@ function AppRouter() {
                     </UserProvider>
                 }>
                 </Route>
-        
+
                 <Route path="*" element={<NotFound />} />
                 <Route path="/no-permission" element={<AccessDenied />} />
             </Routes>

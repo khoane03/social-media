@@ -49,6 +49,8 @@ export default function Profile() {
     const [loading, setLoading] = useState<boolean>(true);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [type, setType] = useState<string>("Avatar");
+    const [isFriend, setIsFriend] = useState<boolean>(false);
+    const [isPending, setIsPending] = useState<boolean>(false);
 
     const getFriends = async () => {
         try {
@@ -60,29 +62,50 @@ export default function Profile() {
     }
 
     useEffect(() => {
+        let isMounted = true;
         setLoading(true);
         document.title = "Trang cá nhân";
         getFriends();
 
         const fetchUserInfo = async () => {
+            if (!userId) return;
             try {
-                if (userId) {
-                    const res = await UserService.getInfoById(userId);
-                    setInfo(res.data);
-                }
+                const res = await UserService.getInfoById(userId);
+                if (isMounted) setInfo(res.data);
             } catch (error) {
                 console.error("Failed to fetch user info:", error);
             } finally {
-                setLoading(false);
+                if (isMounted) setLoading(false);
             }
         };
 
-        fetchUserInfo();
+        const checkFriendship = async () => {
+            if (!onlyView || !userId) return;
+            try {
+                const formData = new FormData();
+                formData.append("friendId", userId);
+                const res = await FriendService.checkFriend(formData);
+                const status = res?.data?.status;
+                if (isMounted) {
+                    setIsFriend(status === "ACCEPTED");
+                    setIsPending(status === "PENDING");
+                }
+            } catch (error) {
+                console.error("Failed to check friendship:", error);
+            }
+        };
 
         if (user && user.id) {
             setOnlyView(userId !== user.id);
         }
-    }, [userId, user]);
+
+        fetchUserInfo();
+        checkFriendship();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [userId, user, onlyView]);
 
     if (loading) {
         return (
@@ -92,6 +115,26 @@ export default function Profile() {
         );
     }
 
+    const addFriend = async (receiverId: string) => {
+        try {
+            const formData = new FormData();
+            formData.append("receiverId", receiverId);
+            await FriendService.addFriend(formData);
+            setIsPending(true); // cập nhật sau khi gửi yêu cầu
+        } catch (err) {
+            console.error("Gửi lời mời kết bạn thất bại");
+        }
+    };
+    const cancelRequest = async (receiverId: string) => {
+        try {
+            const formData = new FormData();
+            formData.append("receiverId", receiverId);
+            await FriendService.addFriend(formData);
+            setIsPending(false); // cập nhật sau khi huỷ
+        } catch (err) {
+            console.error("Huỷ lời mời kết bạn thất bại");
+        }
+    };
 
 
     return (
@@ -152,14 +195,45 @@ export default function Profile() {
                             {info?.verifier && <CheckCircle className="text-blue-500 ml-1" fontSize="small" />}
                         </div>
                         <span className="text-gray-500 text-sm hover:underline pr-1">{totalFriend} bạn bè</span>
-                        {onlyView && <div className="pt-2 flex">
-                            <button className="py-1 px-3 bg-gray-300 rounded-lg mr-2 flex">
-                                <People className="mr-2" />
-                                Bạn bè</button>
-                            <Link to={`/chat/${info?.id}`} className="py-1 px-3 bg-blue-500 rounded-lg mr-2 text-white">
-                                <Chat className="mr-2 text-gray-300" />
-                                Nhắn tin</Link>
-                        </div>}
+                        {onlyView && (
+                            <div className="pt-2 flex">
+                                {!isFriend && !isPending && (
+                                    <button
+                                        className="py-1 px-3 bg-gray-300 rounded-lg mr-2 flex hover:bg-gray-400"
+                                        onClick={() => info?.id && addFriend(info.id)}
+                                    >
+                                        <People className="mr-2" />
+                                        Kết bạn
+                                    </button>
+                                )}
+                                {!isFriend && isPending && (
+                                    <button
+                                        className="py-1 px-3 bg-red-300 rounded-lg mr-2 flex hover:bg-red-400"
+                                        onClick={() => info?.id && cancelRequest(info.id)}
+                                    >
+                                        <People className="mr-2" />
+                                        Huỷ yêu cầu
+                                    </button>
+                                )}
+                                {isFriend && (
+                                    <button
+                                        className="py-1 px-3 bg-gray-300 rounded-lg mr-2 flex cursor-default"
+                                        disabled
+                                    >
+                                        <People className="mr-2" />
+                                        Bạn bè
+                                    </button>
+                                )}
+                                <Link
+                                    to={`/chat/${info?.id}`}
+                                    className="py-1 px-3 bg-blue-500 rounded-lg mr-2 text-white"
+                                >
+                                    <Chat className="mr-2 text-gray-300" />
+                                    Nhắn tin
+                                </Link>
+                            </div>
+                        )}
+
                     </div>
                 </div>
                 <div className="md:mx-40 px-4 pb-1 flex items-center justify-start space-x-2 md:space-x-4">
